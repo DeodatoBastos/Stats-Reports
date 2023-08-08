@@ -61,6 +61,8 @@ owid <- read_delim("data/owid.csv", delim = ",", col_names = TRUE)
 summary(owid)
 ```
 
+Note que para várias colunas há um intervalo muito grande entre o terceiro quartil e o valor máximo, o que pode indicar _outliers_ nos dados disponíveis. Semelhantemente para algumas colunas com `deaths_particulate_pollution`, `deaths_air_pollution` e `energy_use_pc` há um grande intervalo entre o valor mínimo e o primeiro quartil, indicando a exsitência de mais _outliers_.
+
 #### Resumos gráficos de `life_expectancy`, possível variável de respota.
 
 ```{r}
@@ -68,8 +70,11 @@ ggplot(owid, aes(x = life_expectancy)) +
     geom_histogram(aes(y = after_stat(density))) +
     geom_density(lwd = 1, colour = 4,
                  fill = 4, alpha = 0.25) +
-    geom_rug(alpha = 0.5)
+    geom_rug(alpha = 0.5) +
+    labs(x = "Life Expectancy (years)", y = "Density")
 ```
+
+O gráfico de densidade de _kernel_ ajuda a visualizar melhor os picos de espectativa de vida entre 70 e 80 anos, maior de todos e outros menores por volta dos 55, 65 e 85.
 
 ```{r}
 ggplot(owid, aes(x = life_expectancy, y = "")) +
@@ -83,6 +88,7 @@ ggplot(owid, aes(x = life_expectancy, y = "")) +
 
 ```{r}
 ggplot(owid, aes(x = life_expectancy, y = continent)) +
+  geom_errorbar(stat = "boxplot", width = 0.1) +
   geom_boxplot() +
   labs(x = "Life Expectancy (years)", y = "Country")
 ```
@@ -91,6 +97,31 @@ ggplot(owid, aes(x = life_expectancy, y = continent)) +
 ggplot(owid, aes(y = life_expectancy, x = co2_emission_pc)) +
   geom_point(aes(color = continent)) +
   labs(y = "Life Expectancy (years)", x = "CO2 Emissions (tons/person)")
+```
+
+```{r}
+ggplot(owid, aes(y = life_expectancy, x = electricity_demand)) +
+geom_point() +
+labs(x = "Log2(Eletricity Demand)", y = "Life Expectancy (years)")
+```
+
+```{r}
+ggplot(owid, aes(y = life_expectancy, x = 1/electricity_demand)) +
+geom_point() +
+labs(x = "Log2(Eletricity Demand)", y = "Life Expectancy (years)")
+```
+
+```{r}
+ggplot(owid, aes(y = life_expectancy, x = sqrt(electricity_demand))) +
+geom_point() +
+labs(x = "Log2(Eletricity Demand)", y = "Life Expectancy (years)")
+```
+
+
+```{r}
+ggplot(owid, aes(y = life_expectancy, x = log2(electricity_demand))) +
+geom_point() +
+labs(x = "Log2(Eletricity Demand)", y = "Life Expectancy (years)")
 ```
 
 ------------------------------------------------------------------------
