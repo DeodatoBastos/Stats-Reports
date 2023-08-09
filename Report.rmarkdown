@@ -17,6 +17,7 @@ execute:
 library(tidyverse)
 ```
 
+
 ------------------------------------------------------------------------
 
 ### Introdução
@@ -54,6 +55,7 @@ Os dados originais foram pré-processados no sentido de remover observações fa
 Conduza a análise exploratória da massa de dados `owid`, a fim de compreender suas características principais.\
 Voltaremos a utilizar essa massa de dados em atividades futuras.
 
+
 ```{r}
 rm(list = ls())
 owid <- read_delim("data/owid.csv", delim = ",", col_names = TRUE)
@@ -61,9 +63,11 @@ owid$continent <- as.factor(owid$continent)
 summary(owid)
 ```
 
+
 Note que para várias colunas há um intervalo muito grande entre o terceiro quartil e o valor máximo, o que pode indicar _outliers_ nos dados disponíveis. Semelhantemente para algumas colunas com `deaths_particulate_pollution`, `deaths_air_pollution` e `energy_use_pc` há um grande intervalo entre o valor mínimo e o primeiro quartil, indicando a exsitência de mais _outliers_.
 
 #### Resumos gráficos de `life_expectancy`, possível variável de respota.
+
 
 ```{r}
 ggplot(owid, aes(x = life_expectancy)) +
@@ -74,7 +78,9 @@ ggplot(owid, aes(x = life_expectancy)) +
     labs(x = "Life Expectancy (years)", y = "Density")
 ```
 
+
 O gráfico de densidade de _kernel_ ajuda a visualizar melhor os picos de espectativa de vida entre 70 e 80 anos, maior de todos e outros menores por volta dos 55, 65 e 85.
+
 
 ```{r}
 ggplot(owid, aes(x = life_expectancy, y = "")) +
@@ -84,7 +90,9 @@ ggplot(owid, aes(x = life_expectancy, y = "")) +
     labs(y = "", x = "Life Expectancy (years)")
 ```
 
+
 #### Resumos gráficos multidimensionais
+
 
 ```{r}
 ggplot(owid, aes(x = life_expectancy, y = continent)) +
@@ -117,12 +125,12 @@ geom_point() +
 labs(x = "Log2(Eletricity Demand)", y = "Life Expectancy (years)")
 ```
 
-
 ```{r}
 ggplot(owid, aes(y = life_expectancy, x = log2(electricity_demand))) +
 geom_point() +
 labs(x = "Log2(Eletricity Demand)", y = "Life Expectancy (years)")
 ```
+
 
 ------------------------------------------------------------------------
 
@@ -133,6 +141,7 @@ labs(x = "Log2(Eletricity Demand)", y = "Life Expectancy (years)")
 
 + Construa um modelo de regressão para cada um desses pares de variáveis;
 
+
 ```{r}
 br_rls <- lm(happiness_cantril_ladder ~ birth_rate, data = owid)
 dap_rls <- lm(happiness_cantril_ladder ~ deaths_air_pollution, data = owid)
@@ -140,7 +149,9 @@ es_rls <- lm(happiness_cantril_ladder ~ expected_schooling, data = owid)
 le_rls <- lm(happiness_cantril_ladder ~ life_expectancy, data = owid)
 ```
 
+
 + Construa gráficos de dispersão (separados) com as retas de regressão ajustadas para cada caso;
+
 
 ```{r}
 ggplot(owid, aes(x = birth_rate, y = happiness_cantril_ladder)) +
@@ -174,7 +185,9 @@ ggplot(owid, aes(x = life_expectancy, y = happiness_cantril_ladder)) +
   labs(x = "Life Expectancy (years)", y = "Happiness Cantril Ladder")
 ```
 
+
 + Obtenha o MSE para cada modelo. Que variável explicativa produz menor variabilidade em torno da reta de regressão ajustada?
+
 
 ```{r}
 summary(br_rls)$sigma^2
@@ -183,9 +196,11 @@ summary(es_rls)$sigma^2
 summary(le_rls)$sigma^2
 ```
 
+
 A variável explicativa `death_air_pollution` possuiu o menor valor de MSE, ou seja, produz menor variabilidade em torno da reta de regressão ajustada.
 
 + Utilizando R2 como critério, qual das variáveis explicativas contribui para a maior redução na variabilidade da resposta `happiness_cantril_ladder`?
+
 
 ```{r}
 summary(br_rls)$r.squared
@@ -193,6 +208,7 @@ summary(dap_rls)$r.squared
 summary(es_rls)$r.squared
 summary(le_rls)$r.squared
 ```
+
 A variável `death_air_pollution` também possuiu o maior valor para a estatística R2, assim ela contruibui para a maior redução da variabilidade da resposta.
 
 2. Para cada nível da variável categórica `continent`, construa um modelo de regressão para a variável de resposta `happiness_cantril_ladder` em função da variável escolhida no último item da questão anterior.  Assuma que o modelo de 1a. ordem é adequado para modelar essas relações.
@@ -213,3 +229,4 @@ A variável `death_air_pollution` também possuiu o maior valor para a estatíst
 
 
 ----
+

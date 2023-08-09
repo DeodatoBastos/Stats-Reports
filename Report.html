@@ -121,11 +121,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><code>birth_rate</code>: número de nascimentos com vida por 1.000 habitantes na população.</li>
 <li><code>child_mortality</code>: mortes de crianças menores de 5 anos de idade (% nascimentos)</li>
 <li><code>co2_emission_pc</code>: emissões anuais de CO2 per capita (t/pessoa)</li>
-<li><code>deaths_solid_fuels_pollution</code>: mortes resultantes de poluição por queima de combustíveis sólidos em ambientes internos (%)</li>
-<li><code>deaths_particulate_pollution</code>: mortes resultantes de poluição por material particulado em ambientes externos (%)</li>
-<li><code>deaths_air_pollution</code>: mortes resultantes de poluição do ar ambiente (%)</li>
+<li><code>deaths_solid_fuels_pollution</code>: mortes resultantes de poluição por queima de combustíveis sólidos em ambientes internos (/100K)</li>
+<li><code>deaths_particulate_pollution</code>: mortes resultantes de poluição por material particulado em ambientes externos (/100K)</li>
+<li><code>deaths_air_pollution</code>: mortes resultantes de poluição do ar ambiente (/100K)</li>
 <li><code>deaths_ozone</code>: mortes resultantes de poluição por ozônio em ambientes externos (%)</li>
-<li><code>deaths_sanitation</code>: mortes resultantes de falta ou precariedade de acesso a saneamento básico (%)</li>
+<li><code>deaths_sanitation</code>: mortes resultantes de falta ou precariedade de acesso a saneamento básico (100K)</li>
 <li><code>electricity_demand</code>: geração total de eletricidade anual, ajustada por importação e exportação de eletricidade (TWh)</li>
 <li><code>energy_use_pc</code>: consumo de energia médio anual (eletricidade, transporte, aquecimento, preparo de alimentos) per capita (KWh/pessoa)</li>
 <li><code>expected_schooling</code>: expectativa do número de anos de educação que uma criança que entra no sistema escolar deve receber</li>
@@ -145,16 +145,16 @@ Voltaremos a utilizar essa massa de dados em atividades futuras.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>owid <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"data/owid.csv"</span>, <span class="at">delim =</span> <span class="st">","</span>, <span class="at">col_names =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>owid<span class="sc">$</span>continent <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(owid<span class="sc">$</span>continent)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(owid)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  continent         country_code          entity               year     
- Length:985         Length:985         Length:985         Min.   :2011  
- Class :character   Class :character   Class :character   1st Qu.:2014  
- Mode  :character   Mode  :character   Mode  :character   Median :2016  
-                                                          Mean   :2016  
-                                                          3rd Qu.:2018  
-                                                          Max.   :2019  
+<pre><code>         continent   country_code          entity               year     
+ Africa       :293   Length:985         Length:985         Min.   :2011  
+ Asia         :240   Class :character   Class :character   1st Qu.:2014  
+ Europe       :280   Mode  :character   Mode  :character   Median :2016  
+ North America: 95                                         Mean   :2016  
+ Oceania      : 14                                         3rd Qu.:2018  
+ South America: 63                                         Max.   :2019  
    birth_rate    child_mortality  co2_emission_pc   
  Min.   : 5.92   Min.   : 0.200   Min.   : 0.02473  
  1st Qu.:11.20   1st Qu.: 0.580   1st Qu.: 0.76427  
@@ -271,6 +271,121 @@ Voltaremos a utilizar essa massa de dados em atividades futuras.</p>
 </div>
 <hr>
 </section>
+</section>
+<section id="análise-de-regressão" class="level3">
+<h3 class="anchored" data-anchor-id="análise-de-regressão">Análise de Regressão</h3>
+<ol type="1">
+<li>Assuma que um modelo de regressão linear simples é adequado para modelar a relação da variável de resposta <code>happiness_cantril_ladder</code> a cada uma das variáveis explicativas: <code>birth_rate</code>, <code>deaths_air_pollution</code>,<code>expected_schooling</code>, <code>life_expectancy</code>.</li>
+</ol>
+<ul>
+<li>Construa um modelo de regressão para cada um desses pares de variáveis;</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>br_rls <span class="ot">&lt;-</span> <span class="fu">lm</span>(happiness_cantril_ladder <span class="sc">~</span> birth_rate, <span class="at">data =</span> owid)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>dap_rls <span class="ot">&lt;-</span> <span class="fu">lm</span>(happiness_cantril_ladder <span class="sc">~</span> deaths_air_pollution, <span class="at">data =</span> owid)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>es_rls <span class="ot">&lt;-</span> <span class="fu">lm</span>(happiness_cantril_ladder <span class="sc">~</span> expected_schooling, <span class="at">data =</span> owid)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>le_rls <span class="ot">&lt;-</span> <span class="fu">lm</span>(happiness_cantril_ladder <span class="sc">~</span> life_expectancy, <span class="at">data =</span> owid)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>Construa gráficos de dispersão (separados) com as retas de regressão ajustadas para cada caso;</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">x =</span> birth_rate, <span class="at">y =</span> happiness_cantril_ladder)) <span class="sc">+</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># adiciona reta de regressão estimada</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> </span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Birth Rate (#/1K)"</span>, <span class="at">y =</span> <span class="st">"Happiness Cantril Ladder"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">x =</span> deaths_air_pollution, <span class="at">y =</span> happiness_cantril_ladder)) <span class="sc">+</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># adiciona reta de regressão estimada</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> </span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Deaths Air Pollution (#/100K)"</span>, <span class="at">y =</span> <span class="st">"Happiness Cantril Ladder"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">x =</span> expected_schooling, <span class="at">y =</span> happiness_cantril_ladder)) <span class="sc">+</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># adiciona reta de regressão estimada</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> </span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Expected Schoolling (years)"</span>, <span class="at">y =</span> <span class="st">"Happiness Cantril Ladder"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">x =</span> life_expectancy, <span class="at">y =</span> happiness_cantril_ladder)) <span class="sc">+</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># adiciona reta de regressão estimada</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Life Expectancy (years)"</span>, <span class="at">y =</span> <span class="st">"Happiness Cantril Ladder"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<ul>
+<li>Obtenha o MSE para cada modelo. Que variável explicativa produz menor variabilidade em torno da reta de regressão ajustada?</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(br_rls)<span class="sc">$</span>sigma<span class="sc">^</span><span class="dv">2</span></span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.6681553</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(dap_rls)<span class="sc">$</span>sigma<span class="sc">^</span><span class="dv">2</span></span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.4872093</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(es_rls)<span class="sc">$</span>sigma<span class="sc">^</span><span class="dv">2</span></span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.5814385</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(le_rls)<span class="sc">$</span>sigma<span class="sc">^</span><span class="dv">2</span></span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.4916665</code></pre>
+</div>
+</div>
+<p>A variável explicativa <code>death_air_pollution</code> possuiu o menor valor de MSE, ou seja, produz menor variabilidade em torno da reta de regressão ajustada.</p>
+<ul>
+<li>Utilizando R2 como critério, qual das variáveis explicativas contribui para a maior redução na variabilidade da resposta <code>happiness_cantril_ladder</code>?</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(br_rls)<span class="sc">$</span>r.squared</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.4761499</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(dap_rls)<span class="sc">$</span>r.squared</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.618016</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(es_rls)<span class="sc">$</span>r.squared</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.544138</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(le_rls)<span class="sc">$</span>r.squared</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.6145214</code></pre>
+</div>
+</div>
+<ol start="2" type="1">
+<li>Para cada nível da variável categórica <code>continent</code>, construa um modelo de regressão para a variável de resposta <code>happiness_cantril_ladder</code> em função da variável escolhida no último item da questão anterior. Assuma que o modelo de 1a. ordem é adequado para modelar essas relações.</li>
+</ol>
+<ul>
+<li><p>Obtenha os modelos de regressão ajustados. As funções de regressão estimadas são semelhantes para todos os níveis da variável <code>continent</code>? Discuta.</p></li>
+<li><p>Obtenha o MSE para cada nível da variável <code>continent</code> A variabilidade em torno da reta de regressão ajustada é semelhante para todos os níveis?</p></li>
+<li><p>Construa intervalos de confiança 95% para o coeficiente angular da reta de regressão para os continentes <code>North America</code> e <code>South America</code>. As retas de regressão para os diferentes níveis parecem ter mesma inclinação? O que se pode concluir?</p></li>
+<li><p>Construa intervalos de confiança para a resposta esperada correspondendo a <code>deaths_air_pollution</code> = 50, para os continentes <code>North America</code> e <code>South America</code> O que se pode concluir?</p></li>
+<li><p>Construa intervalos de previsão para uma nova observação de cada continente (<code>North America</code> e <code>South America</code>) que tenha <code>deaths_air_pollution</code> = 50. O que se pode concluir?</p></li>
+</ul>
+<ol start="3" type="1">
+<li>Construa um modelo de regressão para a variável de resposta <code>happiness_cantril_ladder</code> em função de <code>gdp_pc</code>. Assuma que o modelo de 1a. ordem é adequado para modelar essas relações. Faz sentido aplicar alguma transformação à variável explicativa? Replique os procedimentos realizados no item (1) para um modelo considerando a variável explicativa em sua forma original ou transformada.</li>
+</ol>
+<hr>
 </section>
 
 </main>
