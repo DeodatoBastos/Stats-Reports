@@ -224,7 +224,7 @@ Voltaremos a utilizar essa massa de dados em atividades futuras.</p>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">x =</span> life_expectancy, <span class="at">y =</span> continent)) <span class="sc">+</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="at">stat =</span> <span class="st">"boxplot"</span>, <span class="at">width =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Life Expectancy (years)"</span>, <span class="at">y =</span> <span class="st">"Country"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Life Expectancy (years)"</span>, <span class="at">y =</span> <span class="st">"Continent"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="Report_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -240,7 +240,7 @@ Voltaremos a utilizar essa massa de dados em atividades futuras.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">y =</span> life_expectancy, <span class="at">x =</span> electricity_demand)) <span class="sc">+</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Log2(Eletricity Demand)"</span>, <span class="at">y =</span> <span class="st">"Life Expectancy (years)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Eletricity Demand (TWh)"</span>, <span class="at">y =</span> <span class="st">"Life Expectancy (years)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="Report_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -248,7 +248,7 @@ Voltaremos a utilizar essa massa de dados em atividades futuras.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">y =</span> life_expectancy, <span class="at">x =</span> <span class="dv">1</span><span class="sc">/</span>electricity_demand)) <span class="sc">+</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Log2(Eletricity Demand)"</span>, <span class="at">y =</span> <span class="st">"Life Expectancy (years)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"1/Ele(tricity Demand (1/TWh)"</span>, <span class="at">y =</span> <span class="st">"Life Expectancy (years)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="Report_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -256,7 +256,7 @@ Voltaremos a utilizar essa massa de dados em atividades futuras.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">y =</span> life_expectancy, <span class="at">x =</span> <span class="fu">sqrt</span>(electricity_demand))) <span class="sc">+</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Log2(Eletricity Demand)"</span>, <span class="at">y =</span> <span class="st">"Life Expectancy (years)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"sqrt(Eletricity Demand)"</span>, <span class="at">y =</span> <span class="st">"Life Expectancy (years)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="Report_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -372,6 +372,7 @@ Voltaremos a utilizar essa massa de dados em atividades futuras.</p>
 <pre><code>[1] 0.6145214</code></pre>
 </div>
 </div>
+<p>A variável <code>death_air_pollution</code> também possuiu o maior valor para a estatística R2, assim ela contruibui para a maior redução da variabilidade da resposta.</p>
 <ol start="2" type="1">
 <li>Para cada nível da variável categórica <code>continent</code>, construa um modelo de regressão para a variável de resposta <code>happiness_cantril_ladder</code> em função da variável escolhida no último item da questão anterior. Assuma que o modelo de 1a. ordem é adequado para modelar essas relações.</li>
 </ol>

@@ -90,7 +90,7 @@ ggplot(owid, aes(x = life_expectancy, y = "")) +
 ggplot(owid, aes(x = life_expectancy, y = continent)) +
   geom_errorbar(stat = "boxplot", width = 0.1) +
   geom_boxplot() +
-  labs(x = "Life Expectancy (years)", y = "Country")
+  labs(x = "Life Expectancy (years)", y = "Continent")
 ```
 
 ```{r}
@@ -102,19 +102,19 @@ ggplot(owid, aes(y = life_expectancy, x = co2_emission_pc)) +
 ```{r}
 ggplot(owid, aes(y = life_expectancy, x = electricity_demand)) +
 geom_point() +
-labs(x = "Log2(Eletricity Demand)", y = "Life Expectancy (years)")
+labs(x = "Eletricity Demand (TWh)", y = "Life Expectancy (years)")
 ```
 
 ```{r}
 ggplot(owid, aes(y = life_expectancy, x = 1/electricity_demand)) +
 geom_point() +
-labs(x = "Log2(Eletricity Demand)", y = "Life Expectancy (years)")
+labs(x = "1/Ele(tricity Demand (1/TWh)", y = "Life Expectancy (years)")
 ```
 
 ```{r}
 ggplot(owid, aes(y = life_expectancy, x = sqrt(electricity_demand))) +
 geom_point() +
-labs(x = "Log2(Eletricity Demand)", y = "Life Expectancy (years)")
+labs(x = "sqrt(Eletricity Demand)", y = "Life Expectancy (years)")
 ```
 
 
