@@ -199,13 +199,80 @@ A variável `death_air_pollution` também possuiu o maior valor para a estatíst
 
 + Obtenha os modelos de regressão ajustados. As funções de regressão estimadas são semelhantes para todos os níveis da variável `continent`? Discuta.
 
+```{r}
+# África
+africa <- owid[owid$continent == "Africa",]
+africa_rls <- lm(happiness_cantril_ladder ~ deaths_air_pollution, data = africa)
+
+# Ásia
+asia <- owid[owid$continent == "Asia",]
+asia_rls <- lm(happiness_cantril_ladder ~ deaths_air_pollution, data = asia)
+
+# Europa
+europe <- owid[owid$continent == "Europe",]
+europe_rls <- lm(happiness_cantril_ladder ~ deaths_air_pollution, data = europe)
+
+# North America
+north_america <- owid[owid$continent == "North America",]
+north_america_rls <- lm(happiness_cantril_ladder ~ deaths_air_pollution, data = north_america)
+
+# Oceania
+oceania <- owid[owid$continent == "Oceania",]
+oceania_rls <- lm(happiness_cantril_ladder ~ deaths_air_pollution, data = oceania)
+
+# South America
+south_america <- owid[owid$continent == "South America",]
+south_america_rls <- lm(happiness_cantril_ladder ~ deaths_air_pollution, data = south_america)
+
+```
+
+
 + Obtenha o MSE para cada nível da variável `continent` A variabilidade em torno da reta de regressão ajustada é semelhante para todos os níveis?
+
+```{r}
+# África
+summary(africa_rls)$sigma^2
+# Ásia
+summary(asia_rls)$sigma^2
+# Europa
+summary(europe_rls)$sigma^2
+# North America
+summary(north_america_rls)$sigma^2
+# Oceania
+summary(oceania_rls)$sigma^2
+# South America
+summary(south_america_rls)$sigma^2
+```
+
 
 + Construa intervalos de confiança 95% para o coeficiente angular da reta de regressão para os continentes `North America` e `South America`. As retas de regressão para os diferentes níveis parecem ter mesma inclinação? O que se pode concluir?
 
+```{r}
+# North America
+confint(north_america_rls, level = 0.95)
+# South America
+confint(south_america_rls, level = 0.95)
+```
+
 + Construa intervalos de confiança para a resposta esperada correspondendo a `deaths_air_pollution` = 50, para os continentes `North America` e `South America` O que se pode concluir?
 
+```{r}
+# North America
+predict(north_america_rls, newdata = data.frame(deaths_air_pollution = 50), interval = "confidence", level = 0.95)
+# South America
+predict(south_america_rls, newdata = data.frame(deaths_air_pollution = 50), interval = "confidence", level = 0.95)
+```
+
 + Construa intervalos de previsão para uma nova observação de cada continente (`North America` e `South America`) que tenha `deaths_air_pollution` = 50. O que se pode concluir?
+
+```{r}
+# Novo valor de deaths_air_pollution
+new_x <- data.frame(deaths_air_pollution = 50)
+# North America
+predict(north_america_rls, newdata = new_x, interval = "prediction", level = 0.95)
+# South America
+predict(south_america_rls, newdata = new_x, interval = "prediction", level = 0.95)
+```
 
 3. Construa um modelo de regressão para a variável de resposta `happiness_cantril_ladder` em função de `gdp_pc`. Assuma que o modelo de 1a. ordem é adequado para modelar essas relações. Faz sentido aplicar alguma transformação à variável explicativa? Replique os procedimentos realizados no  item (1) para um modelo considerando a variável explicativa em sua forma original ou transformada.
 
