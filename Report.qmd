@@ -226,6 +226,17 @@ south_america_rls <- lm(happiness_cantril_ladder ~ deaths_air_pollution, data = 
 
 ```
 
+```{r}
+# Funcoes de regressao estimadas
+africa_rls$coefficients
+asia_rls$coefficients
+europe_rls$coefficients
+north_america_rls$coefficients
+oceania_rls$coefficients
+south_america_rls$coefficients
+```
+
+Com isso, nota-se que as funções de regressão estimadas são semelhantes para todos os níveis da variável `continent`, exceto para o continente `Oceania`, já que o valor do coeficiente angular é negativo para os demais continentes e positivo para o continente `Oceania`. Dentre os outros continentes nota-se que eles tem um coeficiente angular muito próximo, o que indica que a função de regressão estimada é semelhante para esses níveis da variável `continent`.
 
 + Obtenha o MSE para cada nível da variável `continent` A variabilidade em torno da reta de regressão ajustada é semelhante para todos os níveis?
 
@@ -244,6 +255,7 @@ summary(oceania_rls)$sigma^2
 summary(south_america_rls)$sigma^2
 ```
 
+Novamente temos uma diferença em relação ao continente `Oceania`, já que o valor do MSE é muito menor que os demais continentes. Dentre os outros continentes nota-se que eles tem um valor de MSE muito próximo, o que indica que a variabilidade em torno da reta de regressão ajustada é semelhante para esses níveis da variável `continent`, estando em uma mesma ordem de grandeza. Já o do continente `Oceania` é muito menor que os demais.
 
 + Construa intervalos de confiança 95% para o coeficiente angular da reta de regressão para os continentes `North America` e `South America`. As retas de regressão para os diferentes níveis parecem ter mesma inclinação? O que se pode concluir?
 
@@ -254,6 +266,8 @@ confint(north_america_rls, level = 0.95)
 confint(south_america_rls, level = 0.95)
 ```
 
+Com uma confiança de 95%, nota-se que os intervalos de confiança não se interceptam, o que indica que as retas de regressão para os diferentes níveis não tem a mesma inclinação.
+
 + Construa intervalos de confiança para a resposta esperada correspondendo a `deaths_air_pollution` = 50, para os continentes `North America` e `South America` O que se pode concluir?
 
 ```{r}
@@ -262,6 +276,8 @@ predict(north_america_rls, newdata = data.frame(deaths_air_pollution = 50), inte
 # South America
 predict(south_america_rls, newdata = data.frame(deaths_air_pollution = 50), interval = "confidence", level = 0.95)
 ```
+
+Com uma confiança de 95%, nota-se que os intervalos de confiança não se interceptam, o que indica que as respostas esperadas para os continentes `North America` e `South America` não são iguais. Além disso, nota-se que o intervalo de confiança de ambos é pequeno, monstrando que a resposta esperada para `deaths_air_pollution` = 50 é bem próxima do valor estimado.
 
 + Construa intervalos de previsão para uma nova observação de cada continente (`North America` e `South America`) que tenha `deaths_air_pollution` = 50. O que se pode concluir?
 
@@ -273,6 +289,8 @@ predict(north_america_rls, newdata = new_x, interval = "prediction", level = 0.9
 # South America
 predict(south_america_rls, newdata = new_x, interval = "prediction", level = 0.95)
 ```
+
+Para uma nova observação de cada continente (`North America` e `South America`) que tenha `deaths_air_pollution` = 50, nota-se que os intervalos de previsão são muito mais dispersos que o anterior, mostrando que a previsão para uma nova observação é muito mais incerta que a resposta esperada para `deaths_air_pollution` = 50.
 
 3. Construa um modelo de regressão para a variável de resposta `happiness_cantril_ladder` em função de `gdp_pc`. Assuma que o modelo de 1a. ordem é adequado para modelar essas relações. Faz sentido aplicar alguma transformação à variável explicativa? Replique os procedimentos realizados no  item (1) para um modelo considerando a variável explicativa em sua forma original ou transformada.
 
