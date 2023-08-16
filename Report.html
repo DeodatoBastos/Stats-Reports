@@ -569,35 +569,607 @@ deaths_air_pollution -0.01477535 -0.006005369</code></pre>
 <p><img src="Report_files/figure-html/unnamed-chunk-25-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<hr>
-<p>Podemos observar que o modelo logaritmo parece ser uma relação mais adequada para modelar essas relações. Para mostrar isso vamos comprar o MSE e o R2 para cada uma das transformações.</p>
+<table class="table">
+<colgroup>
+<col style="width: 5%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Podemos observar que o modelo logaritmo parece ser uma relação mais adequada para modelar essas relações. Para mostrar isso vamos comprar o MSE e o R2 para cada uma das transformações.</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Signif. codes: 0 ‘<em><strong>’ 0.001 ’</strong>’ 0.01 ’</em>’ 0.05 ‘.’ 0.1 ’ ’ 1</td>
+</tr>
+<tr class="even">
+<td>Residual standard error: 0.8174 on 983 degrees of freedom Multiple R-squared: 0.4761, Adjusted R-squared: 0.4756 F-statistic: 893.5 on 1 and 983 DF, p-value: &lt; 2.2e-16 ``` :::</td>
+</tr>
+<tr class="odd">
+<td><code>{.r .cell-code} summary(dap_rls)</code></td>
+</tr>
+<tr class="even">
+<td>::: {.cell-output .cell-output-stdout} ```</td>
+</tr>
+<tr class="odd">
+<td>Call: lm(formula = happiness_cantril_ladder ~ deaths_air_pollution, data = owid)</td>
+</tr>
+<tr class="even">
+<td>Residuals: Min 1Q Median 3Q Max -1.73842 -0.46927 -0.02081 0.45719 2.30477</td>
+</tr>
+<tr class="odd">
+<td>Coefficients: Estimate Std. Error t value Pr(&gt;|t|) (Intercept) 6.5728601 0.0368129 178.55 &lt;2e-16 <strong><em> deaths_air_pollution -0.0121498 0.0003047 -39.88 &lt;2e-16 </em></strong></td>
+</tr>
+</tbody>
+</table>
+<p>Signif. codes: 0 ‘<em><strong>’ 0.001 ’</strong>’ 0.01 ’</em>’ 0.05 ‘.’ 0.1 ’ ’ 1</p>
+<p>Residual standard error: 0.698 on 983 degrees of freedom Multiple R-squared: 0.618, Adjusted R-squared: 0.6176 F-statistic: 1590 on 1 and 983 DF, p-value: &lt; 2.2e-16</p>
+<pre><code>:::
+
+```{.r .cell-code}
+summary(es_rls)</code></pre>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = happiness_cantril_ladder ~ expected_schooling, data = owid)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-2.24327 -0.47600 -0.00007  0.51091  1.84477 
+
+Coefficients:
+                   Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)        1.647834   0.112285   14.68   &lt;2e-16 ***
+expected_schooling 0.277436   0.008099   34.25   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.7625 on 983 degrees of freedom
+Multiple R-squared:  0.5441,    Adjusted R-squared:  0.5437 
+F-statistic:  1173 on 1 and 983 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(le_rls)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = happiness_cantril_ladder ~ life_expectancy, data = owid)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.91595 -0.50278  0.04082  0.53739  2.07538 
+
+Coefficients:
+                 Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)     -2.482798   0.200453  -12.39   &lt;2e-16 ***
+life_expectancy  0.109583   0.002768   39.59   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.7012 on 983 degrees of freedom
+Multiple R-squared:  0.6145,    Adjusted R-squared:  0.6141 
+F-statistic:  1567 on 1 and 983 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<p>:::</p>
+<p>Agora vamos analisar os modelos por Linearidade, Homocedasticidade, Outliers, Independência e Normalidade.</p>
+<section id="linearidade" class="level5">
+<h5 class="anchored" data-anchor-id="linearidade">Linearidade</h5>
+<ul>
+<li>Birth Rate</li>
+</ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(gdp_rls)<span class="sc">$</span>sigma<span class="sc">^</span><span class="dv">2</span></span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>br_rls_data <span class="ot">&lt;-</span> owid <span class="sc">%&gt;%</span></span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fitted =</span> br_rls<span class="sc">$</span>fit) <span class="sc">%&gt;%</span></span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">resid =</span> br_rls<span class="sc">$</span>res)</span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Gera gráficos dos resíduos: </span></span>
+<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(br_rls_data, <span class="fu">aes</span>(<span class="at">x =</span> fitted, <span class="at">y =</span> resid)) <span class="sc">+</span></span>
+<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb76-8"><a href="#cb76-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb76-9"><a href="#cb76-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"dados originais: modelo hcl ~ br"</span>) <span class="sc">+</span> </span>
+<span id="cb76-10"><a href="#cb76-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"resíduos"</span>, <span class="at">x =</span> <span class="st">"resposta ajustada (hcl)"</span>) </span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(br_rls_data, <span class="fu">aes</span>(<span class="at">x =</span> birth_rate, <span class="at">y =</span> resid)) <span class="sc">+</span></span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb77-4"><a href="#cb77-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"dados originais: modelo hcl ~ br"</span>) <span class="sc">+</span> </span>
+<span id="cb77-5"><a href="#cb77-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"resíduos"</span>, <span class="at">x =</span> <span class="st">"variável explicativa (br)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-28-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<ul>
+<li>Deaths Air Pollution</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>dap_rls_data <span class="ot">&lt;-</span> owid <span class="sc">%&gt;%</span></span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fitted =</span> dap_rls<span class="sc">$</span>fit) <span class="sc">%&gt;%</span></span>
+<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">resid =</span> dap_rls<span class="sc">$</span>res)</span>
+<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-5"><a href="#cb78-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Gera gráficos dos resíduos:</span></span>
+<span id="cb78-6"><a href="#cb78-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dap_rls_data, <span class="fu">aes</span>(<span class="at">x =</span> fitted, <span class="at">y =</span> resid)) <span class="sc">+</span></span>
+<span id="cb78-7"><a href="#cb78-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb78-8"><a href="#cb78-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb78-9"><a href="#cb78-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"dados originais: modelo hcl ~ dap"</span>) <span class="sc">+</span> </span>
+<span id="cb78-10"><a href="#cb78-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"resíduos"</span>, <span class="at">x =</span> <span class="st">"resposta ajustada (hcl)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dap_rls_data, <span class="fu">aes</span>(<span class="at">x =</span> deaths_air_pollution, <span class="at">y =</span> resid)) <span class="sc">+</span></span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb79-4"><a href="#cb79-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"dados originais: modelo hcl ~ dap"</span>) <span class="sc">+</span> </span>
+<span id="cb79-5"><a href="#cb79-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"resíduos"</span>, <span class="at">x =</span> <span class="st">"variável explicativa (dap)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-29-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<ul>
+<li>Expected Schooling</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a>es_rls_data <span class="ot">&lt;-</span> owid <span class="sc">%&gt;%</span></span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fitted =</span> es_rls<span class="sc">$</span>fit) <span class="sc">%&gt;%</span></span>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">resid =</span> es_rls<span class="sc">$</span>res)</span>
+<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Gera gráficos dos resíduos:</span></span>
+<span id="cb80-6"><a href="#cb80-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(es_rls_data, <span class="fu">aes</span>(<span class="at">x =</span> fitted, <span class="at">y =</span> resid)) <span class="sc">+</span></span>
+<span id="cb80-7"><a href="#cb80-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb80-8"><a href="#cb80-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb80-9"><a href="#cb80-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"dados originais: modelo hcl ~ es"</span>) <span class="sc">+</span> </span>
+<span id="cb80-10"><a href="#cb80-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"resíduos"</span>, <span class="at">x =</span> <span class="st">"resposta ajustada (hcl)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(es_rls_data, <span class="fu">aes</span>(<span class="at">x =</span> expected_schooling, <span class="at">y =</span> resid)) <span class="sc">+</span></span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb81-4"><a href="#cb81-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"dados originais: modelo hcl ~ es"</span>) <span class="sc">+</span> </span>
+<span id="cb81-5"><a href="#cb81-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"resíduos"</span>, <span class="at">x =</span> <span class="st">"variável explicativa (es)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-30-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<ul>
+<li>Life Expectancy</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>le_rls_data <span class="ot">&lt;-</span> owid <span class="sc">%&gt;%</span></span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fitted =</span> le_rls<span class="sc">$</span>fit) <span class="sc">%&gt;%</span></span>
+<span id="cb82-3"><a href="#cb82-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">resid =</span> le_rls<span class="sc">$</span>res)</span>
+<span id="cb82-4"><a href="#cb82-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb82-5"><a href="#cb82-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Gera gráficos dos resíduos:</span></span>
+<span id="cb82-6"><a href="#cb82-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(le_rls_data, <span class="fu">aes</span>(<span class="at">x =</span> fitted, <span class="at">y =</span> resid)) <span class="sc">+</span></span>
+<span id="cb82-7"><a href="#cb82-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb82-8"><a href="#cb82-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb82-9"><a href="#cb82-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"dados originais: modelo hcl ~ le"</span>) <span class="sc">+</span> </span>
+<span id="cb82-10"><a href="#cb82-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"resíduos"</span>, <span class="at">x =</span> <span class="st">"resposta ajustada (hcl)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(le_rls_data, <span class="fu">aes</span>(<span class="at">x =</span> life_expectancy, <span class="at">y =</span> resid)) <span class="sc">+</span></span>
+<span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb83-3"><a href="#cb83-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb83-4"><a href="#cb83-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"dados originais: modelo hcl ~ le"</span>) <span class="sc">+</span> </span>
+<span id="cb83-5"><a href="#cb83-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"resíduos"</span>, <span class="at">x =</span> <span class="st">"variável explicativa (le)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-31-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="homocedasticidade" class="level5">
+<h5 class="anchored" data-anchor-id="homocedasticidade">Homocedasticidade</h5>
+<ul>
+<li>Birth Rate</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(br_rls_data, <span class="fu">aes</span>(<span class="at">x =</span> fitted, <span class="at">y =</span> <span class="fu">abs</span>(resid))) <span class="sc">+</span></span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb84-3"><a href="#cb84-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb84-4"><a href="#cb84-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"dados originais: modelo hcl ~ br"</span>) <span class="sc">+</span></span>
+<span id="cb84-5"><a href="#cb84-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"|resíduos|"</span>, <span class="at">x =</span> <span class="st">"resposta ajustada (hcl)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(br_rls_data, <span class="fu">aes</span>(<span class="at">x =</span> birth_rate, <span class="at">y =</span> <span class="fu">abs</span>(resid))) <span class="sc">+</span></span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb85-3"><a href="#cb85-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb85-4"><a href="#cb85-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"dados originais: modelo hcl ~ br"</span>) <span class="sc">+</span></span>
+<span id="cb85-5"><a href="#cb85-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"|resíduos|"</span>, <span class="at">x =</span> <span class="st">"variável explicativa (br)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-32-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Para concluir se há homocedasticidade, vamos realizar o teste de Breusch-Pagan.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Teste de Breusch-Pagan</span></span>
+<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bptest</span>(br_rls, <span class="sc">~</span> birth_rate, <span class="at">data =</span> owid)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.502539</code></pre>
+<pre><code>
+    studentized Breusch-Pagan test
+
+data:  br_rls
+BP = 57.373, df = 1, p-value = 3.606e-14</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(gdp_rls_inv)<span class="sc">$</span>sigma<span class="sc">^</span><span class="dv">2</span></span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>O valor do p-valor é menor que 0.05, o que indica que há heterocedasticidade, ou seja, a variância dos resíduos não é constante.</p>
+<ul>
+<li>Deaths Air Pollution</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dap_rls_data, <span class="fu">aes</span>(<span class="at">x =</span> fitted, <span class="at">y =</span> <span class="fu">abs</span>(resid))) <span class="sc">+</span></span>
+<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb88-3"><a href="#cb88-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb88-4"><a href="#cb88-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"dados originais: modelo hcl ~ dap"</span>) <span class="sc">+</span></span>
+<span id="cb88-5"><a href="#cb88-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"|resíduos|"</span>, <span class="at">x =</span> <span class="st">"resposta ajustada (hcl)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dap_rls_data, <span class="fu">aes</span>(<span class="at">x =</span> deaths_air_pollution, <span class="at">y =</span> <span class="fu">abs</span>(resid))) <span class="sc">+</span></span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb89-3"><a href="#cb89-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb89-4"><a href="#cb89-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"dados originais: modelo hcl ~ dap"</span>) <span class="sc">+</span></span>
+<span id="cb89-5"><a href="#cb89-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"|resíduos|"</span>, <span class="at">x =</span> <span class="st">"variável explicativa (dap)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-34-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Para concluir se há homocedasticidade, vamos realizar o teste de Breusch-Pagan.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Teste de Breusch-Pagan</span></span>
+<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bptest</span>(dap_rls, <span class="sc">~</span> deaths_air_pollution, <span class="at">data =</span> owid)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 1.274174</code></pre>
+<pre><code>
+    studentized Breusch-Pagan test
+
+data:  dap_rls
+BP = 3.6022, df = 1, p-value = 0.0577</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(gdp_rls_log)<span class="sc">$</span>sigma<span class="sc">^</span><span class="dv">2</span></span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>O valor do p-valor é maior que 0.05, o que indica que não há heterocedasticidade, ou seja, aceita-se a hipótese nula de que a variância dos resíduos é constante.</p>
+<ul>
+<li>Expected Schooling</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(es_rls_data, <span class="fu">aes</span>(<span class="at">x =</span> fitted, <span class="at">y =</span> <span class="fu">abs</span>(resid))) <span class="sc">+</span></span>
+<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb92-3"><a href="#cb92-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb92-4"><a href="#cb92-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"dados originais: modelo hcl ~ es"</span>) <span class="sc">+</span></span>
+<span id="cb92-5"><a href="#cb92-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"|resíduos|"</span>, <span class="at">x =</span> <span class="st">"resposta ajustada (hcl)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-36-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(es_rls_data, <span class="fu">aes</span>(<span class="at">x =</span> expected_schooling, <span class="at">y =</span> <span class="fu">abs</span>(resid))) <span class="sc">+</span></span>
+<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb93-3"><a href="#cb93-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb93-4"><a href="#cb93-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"dados originais: modelo hcl ~ es"</span>) <span class="sc">+</span></span>
+<span id="cb93-5"><a href="#cb93-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"|resíduos|"</span>, <span class="at">x =</span> <span class="st">"variável explicativa (es)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-36-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Para concluir se há homocedasticidade, vamos realizar o teste de Breusch-Pagan.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Teste de Breusch-Pagan</span></span>
+<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bptest</span>(es_rls, <span class="sc">~</span> expected_schooling, <span class="at">data =</span> owid)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.4146307</code></pre>
+<pre><code>
+    studentized Breusch-Pagan test
+
+data:  es_rls
+BP = 0.68346, df = 1, p-value = 0.4084</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(gdp_rls)<span class="sc">$</span>r.squared</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>O valor do p-valor foi bem maior que 0.05, o que indica que não há heterocedasticidade, ou seja, aceita-se a hipótese nula de que a variância dos resíduos é constante.</p>
+<ul>
+<li>Life Expectancy</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(le_rls_data, <span class="fu">aes</span>(<span class="at">x =</span> fitted, <span class="at">y =</span> <span class="fu">abs</span>(resid))) <span class="sc">+</span></span>
+<span id="cb96-2"><a href="#cb96-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb96-3"><a href="#cb96-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb96-4"><a href="#cb96-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"dados originais: modelo hcl ~ le"</span>) <span class="sc">+</span></span>
+<span id="cb96-5"><a href="#cb96-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"|resíduos|"</span>, <span class="at">x =</span> <span class="st">"resposta ajustada (hcl)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-38-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(le_rls_data, <span class="fu">aes</span>(<span class="at">x =</span> life_expectancy, <span class="at">y =</span> <span class="fu">abs</span>(resid))) <span class="sc">+</span></span>
+<span id="cb97-2"><a href="#cb97-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb97-3"><a href="#cb97-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb97-4"><a href="#cb97-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"dados originais: modelo hcl ~ le"</span>) <span class="sc">+</span></span>
+<span id="cb97-5"><a href="#cb97-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"|resíduos|"</span>, <span class="at">x =</span> <span class="st">"variável explicativa (le)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-38-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Para concluir se há homocedasticidade, vamos realizar o teste de Breusch-Pagan.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Teste de Breusch-Pagan</span></span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bptest</span>(le_rls, <span class="sc">~</span> life_expectancy, <span class="at">data =</span> owid)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.6059971</code></pre>
+<pre><code>
+    studentized Breusch-Pagan test
+
+data:  le_rls
+BP = 0.081999, df = 1, p-value = 0.7746</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(gdp_rls_inv)<span class="sc">$</span>r.squared</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>O valor do p-valor foi bem maior que 0.05, o que indica que não há heterocedasticidade, ou seja, aceita-se a hipótese nula de que a variância dos resíduos é constante.</p>
+</section>
+<section id="outliers" class="level5">
+<h5 class="anchored" data-anchor-id="outliers">Outliers</h5>
+<p>Para identificar os outliers é importante utilizar os resíduos semi-studentizados, que são os resíduos divididos pelo desvio padrão dos resíduos. Assim, vamos analisar os gráficos dos resíduos semi-studentizados.</p>
+<ul>
+<li>Birth Rate</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="co"># criar nova coluna para os residuos semi-studentizados</span></span>
+<span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a>br_rls_data <span class="ot">&lt;-</span> br_rls_data <span class="sc">%&gt;%</span></span>
+<span id="cb100-3"><a href="#cb100-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">resid_ss =</span> <span class="fu">rstandard</span>(br_rls))</span>
+<span id="cb100-4"><a href="#cb100-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb100-5"><a href="#cb100-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Gera gráficos dos resíduos semi-studentizados:</span></span>
+<span id="cb100-6"><a href="#cb100-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(br_rls_data, <span class="fu">aes</span>(<span class="at">x =</span> fitted, <span class="at">y =</span> resid_ss)) <span class="sc">+</span></span>
+<span id="cb100-7"><a href="#cb100-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb100-8"><a href="#cb100-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="sc">-</span><span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">4</span>), </span>
+<span id="cb100-9"><a href="#cb100-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>, </span>
+<span id="cb100-10"><a href="#cb100-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="fu">c</span>(<span class="st">"red"</span>, <span class="st">"orange"</span>, <span class="st">"black"</span>, <span class="st">"orange"</span>, <span class="st">"red"</span>) ) <span class="sc">+</span></span>
+<span id="cb100-11"><a href="#cb100-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="sc">-</span><span class="dv">6</span>, <span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb100-12"><a href="#cb100-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"dados transformados: modelo hcl ~ br"</span>) <span class="sc">+</span></span>
+<span id="cb100-13"><a href="#cb100-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"resíduos padronizados"</span>, <span class="at">x =</span> <span class="st">"resposta ajustada (hcl)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-40-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb101"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(br_rls_data, <span class="fu">aes</span>(<span class="at">x =</span> birth_rate, <span class="at">y =</span> resid_ss)) <span class="sc">+</span></span>
+<span id="cb101-2"><a href="#cb101-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb101-3"><a href="#cb101-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="sc">-</span><span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">4</span>), </span>
+<span id="cb101-4"><a href="#cb101-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>, </span>
+<span id="cb101-5"><a href="#cb101-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="fu">c</span>(<span class="st">"red"</span>, <span class="st">"orange"</span>, <span class="st">"black"</span>, <span class="st">"orange"</span>, <span class="st">"red"</span>) ) <span class="sc">+</span></span>
+<span id="cb101-6"><a href="#cb101-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="sc">-</span><span class="dv">6</span>, <span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb101-7"><a href="#cb101-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"dados transformados: modelo hcl ~ br"</span>) <span class="sc">+</span></span>
+<span id="cb101-8"><a href="#cb101-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"resíduos padronizados"</span>, <span class="at">x =</span> <span class="st">"variável explicativa (br)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-40-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Nota-se que temos alguns pontos com módulo do resíduo semi-studentizado próximos a 3, o que pode indicar a existência de outliers mas a evidência é fraca e não se deve realizar a exclusão de nenhum ponto por enquanto.</p>
+<ul>
+<li>Deaths Air Pollution</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb102"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="co"># criar nova coluna para os residuos semi-studentizados</span></span>
+<span id="cb102-2"><a href="#cb102-2" aria-hidden="true" tabindex="-1"></a>dap_rls_data <span class="ot">&lt;-</span> dap_rls_data <span class="sc">%&gt;%</span></span>
+<span id="cb102-3"><a href="#cb102-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">resid_ss =</span> <span class="fu">rstandard</span>(dap_rls))</span>
+<span id="cb102-4"><a href="#cb102-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb102-5"><a href="#cb102-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Gera gráficos dos resíduos semi-studentizados:</span></span>
+<span id="cb102-6"><a href="#cb102-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dap_rls_data, <span class="fu">aes</span>(<span class="at">x =</span> fitted, <span class="at">y =</span> resid_ss)) <span class="sc">+</span></span>
+<span id="cb102-7"><a href="#cb102-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb102-8"><a href="#cb102-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="sc">-</span><span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">4</span>), </span>
+<span id="cb102-9"><a href="#cb102-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>, </span>
+<span id="cb102-10"><a href="#cb102-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="fu">c</span>(<span class="st">"red"</span>, <span class="st">"orange"</span>, <span class="st">"black"</span>, <span class="st">"orange"</span>, <span class="st">"red"</span>) ) <span class="sc">+</span></span>
+<span id="cb102-11"><a href="#cb102-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="sc">-</span><span class="dv">6</span>, <span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb102-12"><a href="#cb102-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"dados transformados: modelo hcl ~ dap"</span>) <span class="sc">+</span></span>
+<span id="cb102-13"><a href="#cb102-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"resíduos padronizados"</span>, <span class="at">x =</span> <span class="st">"resposta ajustada (hcl)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-41-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb103"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dap_rls_data, <span class="fu">aes</span>(<span class="at">x =</span> deaths_air_pollution, <span class="at">y =</span> resid_ss)) <span class="sc">+</span></span>
+<span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb103-3"><a href="#cb103-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="sc">-</span><span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">4</span>), </span>
+<span id="cb103-4"><a href="#cb103-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>, </span>
+<span id="cb103-5"><a href="#cb103-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="fu">c</span>(<span class="st">"red"</span>, <span class="st">"orange"</span>, <span class="st">"black"</span>, <span class="st">"orange"</span>, <span class="st">"red"</span>) ) <span class="sc">+</span></span>
+<span id="cb103-6"><a href="#cb103-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="sc">-</span><span class="dv">6</span>, <span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb103-7"><a href="#cb103-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"dados transformados: modelo hcl ~ dap"</span>) <span class="sc">+</span></span>
+<span id="cb103-8"><a href="#cb103-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"resíduos padronizados"</span>, <span class="at">x =</span> <span class="st">"variável explicativa (dap)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-41-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Nota-se em ambos os gráficos a existência de pontos de resíduos semi-studentizados maiores que 3, indicando uma forte possibilidade de outliers. Assim, é mais recomendade nesse caso excluir esses pontos.</p>
+<ul>
+<li>Expected Schooling</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb104"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="co"># criar nova coluna para os residuos semi-studentizados</span></span>
+<span id="cb104-2"><a href="#cb104-2" aria-hidden="true" tabindex="-1"></a>es_rls_data <span class="ot">&lt;-</span> es_rls_data <span class="sc">%&gt;%</span></span>
+<span id="cb104-3"><a href="#cb104-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">resid_ss =</span> <span class="fu">rstandard</span>(es_rls))</span>
+<span id="cb104-4"><a href="#cb104-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-5"><a href="#cb104-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Gera gráficos dos resíduos semi-studentizados:</span></span>
+<span id="cb104-6"><a href="#cb104-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(es_rls_data, <span class="fu">aes</span>(<span class="at">x =</span> fitted, <span class="at">y =</span> resid_ss)) <span class="sc">+</span></span>
+<span id="cb104-7"><a href="#cb104-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb104-8"><a href="#cb104-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="sc">-</span><span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">4</span>), </span>
+<span id="cb104-9"><a href="#cb104-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>, </span>
+<span id="cb104-10"><a href="#cb104-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="fu">c</span>(<span class="st">"red"</span>, <span class="st">"orange"</span>, <span class="st">"black"</span>, <span class="st">"orange"</span>, <span class="st">"red"</span>) ) <span class="sc">+</span></span>
+<span id="cb104-11"><a href="#cb104-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="sc">-</span><span class="dv">6</span>, <span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb104-12"><a href="#cb104-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"dados transformados: modelo hcl ~ es"</span>) <span class="sc">+</span></span>
+<span id="cb104-13"><a href="#cb104-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"resíduos padronizados"</span>, <span class="at">x =</span> <span class="st">"resposta ajustada (hcl)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-42-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb105"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(es_rls_data, <span class="fu">aes</span>(<span class="at">x =</span> expected_schooling, <span class="at">y =</span> resid_ss)) <span class="sc">+</span></span>
+<span id="cb105-2"><a href="#cb105-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb105-3"><a href="#cb105-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="sc">-</span><span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">4</span>), </span>
+<span id="cb105-4"><a href="#cb105-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>, </span>
+<span id="cb105-5"><a href="#cb105-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="fu">c</span>(<span class="st">"red"</span>, <span class="st">"orange"</span>, <span class="st">"black"</span>, <span class="st">"orange"</span>, <span class="st">"red"</span>) ) <span class="sc">+</span></span>
+<span id="cb105-6"><a href="#cb105-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="sc">-</span><span class="dv">6</span>, <span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb105-7"><a href="#cb105-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"dados transformados: modelo hcl ~ es"</span>) <span class="sc">+</span></span>
+<span id="cb105-8"><a href="#cb105-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"resíduos padronizados"</span>, <span class="at">x =</span> <span class="st">"variável explicativa (es)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-42-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Alguns pontos se aproximam de 3, mas não o suficiente para indicar a existência de outliers.</p>
+<ul>
+<li>Life Expectancy</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb106"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb106-1"><a href="#cb106-1" aria-hidden="true" tabindex="-1"></a><span class="co"># criar nova coluna para os residuos semi-studentizados</span></span>
+<span id="cb106-2"><a href="#cb106-2" aria-hidden="true" tabindex="-1"></a>le_rls_data <span class="ot">&lt;-</span> le_rls_data <span class="sc">%&gt;%</span></span>
+<span id="cb106-3"><a href="#cb106-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">resid_ss =</span> <span class="fu">rstandard</span>(le_rls))</span>
+<span id="cb106-4"><a href="#cb106-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb106-5"><a href="#cb106-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Gera gráficos dos resíduos semi-studentizados:</span></span>
+<span id="cb106-6"><a href="#cb106-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(le_rls_data, <span class="fu">aes</span>(<span class="at">x =</span> fitted, <span class="at">y =</span> resid_ss)) <span class="sc">+</span></span>
+<span id="cb106-7"><a href="#cb106-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb106-8"><a href="#cb106-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="sc">-</span><span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">4</span>), </span>
+<span id="cb106-9"><a href="#cb106-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>, </span>
+<span id="cb106-10"><a href="#cb106-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="fu">c</span>(<span class="st">"red"</span>, <span class="st">"orange"</span>, <span class="st">"black"</span>, <span class="st">"orange"</span>, <span class="st">"red"</span>) ) <span class="sc">+</span></span>
+<span id="cb106-11"><a href="#cb106-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="sc">-</span><span class="dv">6</span>, <span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb106-12"><a href="#cb106-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"dados transformados: modelo hcl ~ le"</span>) <span class="sc">+</span></span>
+<span id="cb106-13"><a href="#cb106-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"resíduos padronizados"</span>, <span class="at">x =</span> <span class="st">"resposta ajustada (hcl)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-43-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb107"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(le_rls_data, <span class="fu">aes</span>(<span class="at">x =</span> life_expectancy, <span class="at">y =</span> resid_ss)) <span class="sc">+</span></span>
+<span id="cb107-2"><a href="#cb107-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb107-3"><a href="#cb107-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="sc">-</span><span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">4</span>), </span>
+<span id="cb107-4"><a href="#cb107-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>, </span>
+<span id="cb107-5"><a href="#cb107-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="fu">c</span>(<span class="st">"red"</span>, <span class="st">"orange"</span>, <span class="st">"black"</span>, <span class="st">"orange"</span>, <span class="st">"red"</span>) ) <span class="sc">+</span></span>
+<span id="cb107-6"><a href="#cb107-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="sc">-</span><span class="dv">6</span>, <span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb107-7"><a href="#cb107-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"dados transformados: modelo hcl ~ le"</span>) <span class="sc">+</span></span>
+<span id="cb107-8"><a href="#cb107-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"resíduos padronizados"</span>, <span class="at">x =</span> <span class="st">"variável explicativa (le)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-43-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Temos novamente alguns pontos com módulo do resíduo semi-studentizado próximos a 3, o que pode indicar a existência de outliers mas a evidência é fraca e não se deve realizar a exclusão de nenhum ponto por enquanto.</p>
+</section>
+<section id="independência" class="level5">
+<h5 class="anchored" data-anchor-id="independência">Independência</h5>
+<p>Para a independência iremos utilizar o teste de Durbin-Watson.</p>
+<ul>
+<li>Birth Rate</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb108"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Teste de Durbin-Watson</span></span>
+<span id="cb108-2"><a href="#cb108-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dwtest</span>(br_rls, <span class="sc">~</span> birth_rate, <span class="at">data =</span> owid)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0</code></pre>
+<pre><code>
+    Durbin-Watson test
+
+data:  br_rls
+DW = 1.7294, p-value = 9.235e-06
+alternative hypothesis: true autocorrelation is greater than 0</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(gdp_rls_log)<span class="sc">$</span>r.squared</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>O p-valor é bem menor que 0.05, o que indica que há autocorrelação positiva, ou seja, a hipótse nula de que não há autocorrelação positiva é rejeitada.</p>
+<ul>
+<li>Deaths Air Pollution</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb110"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Teste de Durbin-Watson</span></span>
+<span id="cb110-2"><a href="#cb110-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dwtest</span>(dap_rls, <span class="sc">~</span> deaths_air_pollution, <span class="at">data =</span> owid)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.6749194</code></pre>
+<pre><code>
+    Durbin-Watson test
+
+data:  dap_rls
+DW = 1.4866, p-value = 2.843e-16
+alternative hypothesis: true autocorrelation is greater than 0</code></pre>
 </div>
 </div>
-<p>Com esses parametros podemos perceber que o modelo logaritmo é o que apresenta o menor MSE e o maior R2, o que indica que ele é o mais adequado para modelar essas relações.</p>
+<p>O p-valor é bem menor que 0.05, o que indica que há autocorrelação positiva, ou seja, a hipótse nula de que não há autocorrelação positiva é rejeitada.</p>
+<ul>
+<li>Expected Schooling</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb112"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Teste de Durbin-Watson</span></span>
+<span id="cb112-2"><a href="#cb112-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dwtest</span>(es_rls, <span class="sc">~</span> expected_schooling, <span class="at">data =</span> owid)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Durbin-Watson test
+
+data:  es_rls
+DW = 1.7466, p-value = 3.007e-05
+alternative hypothesis: true autocorrelation is greater than 0</code></pre>
+</div>
+</div>
+<p>O p-valor é bem menor que 0.05, o que indica que há autocorrelação positiva, ou seja, a hipótse nula de que não há autocorrelação positiva é rejeitada.</p>
+<ul>
+<li>Life Expectancy</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb114"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb114-1"><a href="#cb114-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Teste de Durbin-Watson</span></span>
+<span id="cb114-2"><a href="#cb114-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dwtest</span>(le_rls, <span class="sc">~</span> life_expectancy, <span class="at">data =</span> owid)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Durbin-Watson test
+
+data:  le_rls
+DW = 1.6371, p-value = 4.94e-09
+alternative hypothesis: true autocorrelation is greater than 0</code></pre>
+</div>
+</div>
+<p>O p-valor é bem menor que 0.05, o que indica que há autocorrelação positiva, ou seja, a hipótse nula de que não há autocorrelação positiva é rejeitada.</p>
+</section>
+<section id="normalidade" class="level5">
+<h5 class="anchored" data-anchor-id="normalidade">Normalidade</h5>
+<p>Para a normalidade iremos utilizar o teste de Shapiro-Wilk.</p>
+<ul>
+<li>Birth Rate</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb116"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb116-1"><a href="#cb116-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Teste de Shapiro-Wilk</span></span>
+<span id="cb116-2"><a href="#cb116-2" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(br_rls<span class="sc">$</span>res)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  br_rls$res
+W = 0.99178, p-value = 2.671e-05</code></pre>
+</div>
+</div>
+<p>O p-valor é bem menor que 0.05, o que indica que não há normalidade, ou seja, a hipótse nula de que há normalidade é rejeitada. Assim, concluimos que os erros não são normalmente distribuídos.</p>
+<ul>
+<li>Deaths Air Pollution</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb118"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb118-1"><a href="#cb118-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Teste de Shapiro-Wilk</span></span>
+<span id="cb118-2"><a href="#cb118-2" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(dap_rls<span class="sc">$</span>res)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  dap_rls$res
+W = 0.99432, p-value = 0.0008976</code></pre>
+</div>
+</div>
+<p>O p-valor é menor que 0.05, o que indica que não há normalidade, ou seja, a hipótse nula de que há normalidade é rejeitada. Assim, concluimos que os erros não são normalmente distribuídos.</p>
+<ul>
+<li>Expected Schooling</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb120"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb120-1"><a href="#cb120-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Teste de Shapiro-Wilk</span></span>
+<span id="cb120-2"><a href="#cb120-2" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(es_rls<span class="sc">$</span>res)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  es_rls$res
+W = 0.99561, p-value = 0.006501</code></pre>
+</div>
+</div>
+<p>O p-valor é menor que 0.05, o que indica que não há normalidade, ou seja, a hipótse nula de que há normalidade é rejeitada. Assim, concluimos que os erros não são normalmente distribuídos.</p>
+<ul>
+<li>Life Expectancy</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb122"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb122-1"><a href="#cb122-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Teste de Shapiro-Wilk</span></span>
+<span id="cb122-2"><a href="#cb122-2" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(le_rls<span class="sc">$</span>res)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  le_rls$res
+W = 0.98937, p-value = 1.473e-06</code></pre>
+</div>
+</div>
+<p>O p-valor é bem menor que 0.05, o que indica que não há normalidade, ou seja, a hipótse nula de que há normalidade é rejeitada. Assim, concluimos que os erros não são normalmente distribuídos.</p>
+<ol start="2" type="1">
+<li><p>Ajuste um modelo de regressão linear simples para a variável <code>happiness_cantril_ladder</code> como função de <code>deaths_air_pollution</code> após excluir as observações 973 (X = 237 e Y = 6.00), 974 (X = 234 e Y = 5.99) e 975 (X = 225 e Y = 5.97). Obtenha intervalos de previsão de 95% de confiança para novas observações que apresentam valores da variável explicativa iguais a 237, 234 e 225. As observações eliminadas encontram-se nos limites dos intervalos de previsão obtidos? Discuta o significado dos resultados obtidos.</p></li>
+<li><p>Para os modelos considerando cada nível da variável <code>continent</code> no item (2) da seção anterior, realize o diagnóstico através da análise dos resíduos. Todos aparentam ter mesma variância dos erros? É necessário realizar alguma transformação de variáveis? Tente solucionar os possíveis problemas encontrados com o modelo. Que conclusões é possível obter a partir da análise?</p></li>
+</ol>
+<hr>
+</section>
 </section>
 
 </main>

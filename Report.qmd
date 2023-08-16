@@ -16,6 +16,7 @@ execute:
 ```{r include = FALSE}
 library(tidyverse)
 library(gridExtra)
+library(lmtest)
 ```
 
 ------------------------------------------------------------------------
@@ -341,6 +342,393 @@ Com esses parametros podemos perceber que o modelo logaritmo é o que apresenta 
 ### Diagnóstico
 
 1. Para cada um dos modelos de regressão ajustados no item (1) da seção anterior, realize o diagnóstico através da análise dos resíduos e apresente um resumo de suas conclusões. O modelo de regressão linear simples clássico de 1a. ordem é adequado a alguma das situações investigadas?
+
+Inicialmente, vamos analisar o resumo do modelo de regressão ajustado
+
+```{r}
+summary(br_rls)
+summary(dap_rls)
+summary(es_rls)
+summary(le_rls)
+```
+
+Agora vamos analisar os modelos por Linearidade, Homocedasticidade, Outliers, Independência e Normalidade.
+
+##### Linearidade
+
++ Birth Rate
+
+```{r}
+br_rls_data <- owid %>%
+  mutate(fitted = br_rls$fit) %>%
+  mutate(resid = br_rls$res)
+
+# Gera gráficos dos resíduos: 
+ggplot(br_rls_data, aes(x = fitted, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados originais: modelo hcl ~ br") + 
+  labs(y = "resíduos", x = "resposta ajustada (hcl)") 
+ggplot(br_rls_data, aes(x = birth_rate, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados originais: modelo hcl ~ br") + 
+  labs(y = "resíduos", x = "variável explicativa (br)")
+```
+
++ Deaths Air Pollution
+
+```{r}
+dap_rls_data <- owid %>%
+  mutate(fitted = dap_rls$fit) %>%
+  mutate(resid = dap_rls$res)
+
+# Gera gráficos dos resíduos:
+ggplot(dap_rls_data, aes(x = fitted, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados originais: modelo hcl ~ dap") + 
+  labs(y = "resíduos", x = "resposta ajustada (hcl)")
+ggplot(dap_rls_data, aes(x = deaths_air_pollution, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados originais: modelo hcl ~ dap") + 
+  labs(y = "resíduos", x = "variável explicativa (dap)")
+```
+
++ Expected Schooling
+
+```{r}
+es_rls_data <- owid %>%
+  mutate(fitted = es_rls$fit) %>%
+  mutate(resid = es_rls$res)
+
+# Gera gráficos dos resíduos:
+ggplot(es_rls_data, aes(x = fitted, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados originais: modelo hcl ~ es") + 
+  labs(y = "resíduos", x = "resposta ajustada (hcl)")
+ggplot(es_rls_data, aes(x = expected_schooling, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados originais: modelo hcl ~ es") + 
+  labs(y = "resíduos", x = "variável explicativa (es)")
+```
+
++ Life Expectancy
+
+```{r}
+le_rls_data <- owid %>%
+  mutate(fitted = le_rls$fit) %>%
+  mutate(resid = le_rls$res)
+
+# Gera gráficos dos resíduos:
+ggplot(le_rls_data, aes(x = fitted, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados originais: modelo hcl ~ le") + 
+  labs(y = "resíduos", x = "resposta ajustada (hcl)")
+ggplot(le_rls_data, aes(x = life_expectancy, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados originais: modelo hcl ~ le") + 
+  labs(y = "resíduos", x = "variável explicativa (le)")
+```
+
+##### Homocedasticidade
+
++ Birth Rate
+
+```{r}
+ggplot(br_rls_data, aes(x = fitted, y = abs(resid))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados originais: modelo hcl ~ br") +
+  labs(y = "|resíduos|", x = "resposta ajustada (hcl)")
+ggplot(br_rls_data, aes(x = birth_rate, y = abs(resid))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados originais: modelo hcl ~ br") +
+  labs(y = "|resíduos|", x = "variável explicativa (br)")
+```
+
+Para concluir se há homocedasticidade, vamos realizar o teste de Breusch-Pagan.
+
+```{r}
+# Teste de Breusch-Pagan
+bptest(br_rls, ~ birth_rate, data = owid)
+```
+
+O valor do p-valor é menor que 0.05, o que indica que há heterocedasticidade, ou seja, a variância dos resíduos não é constante.
+
++ Deaths Air Pollution
+
+```{r}
+ggplot(dap_rls_data, aes(x = fitted, y = abs(resid))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados originais: modelo hcl ~ dap") +
+  labs(y = "|resíduos|", x = "resposta ajustada (hcl)")
+ggplot(dap_rls_data, aes(x = deaths_air_pollution, y = abs(resid))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados originais: modelo hcl ~ dap") +
+  labs(y = "|resíduos|", x = "variável explicativa (dap)")
+```
+
+Para concluir se há homocedasticidade, vamos realizar o teste de Breusch-Pagan.
+
+```{r}
+# Teste de Breusch-Pagan
+bptest(dap_rls, ~ deaths_air_pollution, data = owid)
+```
+
+O valor do p-valor é maior que 0.05, o que indica que não há heterocedasticidade, ou seja, aceita-se a hipótese nula de que a variância dos resíduos é constante.
+
++ Expected Schooling
+
+```{r}
+ggplot(es_rls_data, aes(x = fitted, y = abs(resid))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados originais: modelo hcl ~ es") +
+  labs(y = "|resíduos|", x = "resposta ajustada (hcl)")
+ggplot(es_rls_data, aes(x = expected_schooling, y = abs(resid))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados originais: modelo hcl ~ es") +
+  labs(y = "|resíduos|", x = "variável explicativa (es)")
+```
+
+Para concluir se há homocedasticidade, vamos realizar o teste de Breusch-Pagan.
+
+```{r}
+# Teste de Breusch-Pagan
+bptest(es_rls, ~ expected_schooling, data = owid)
+```
+
+O valor do p-valor foi bem maior que 0.05, o que indica que não há heterocedasticidade, ou seja, aceita-se a hipótese nula de que a variância dos resíduos é constante.
+
++ Life Expectancy
+
+```{r}
+ggplot(le_rls_data, aes(x = fitted, y = abs(resid))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados originais: modelo hcl ~ le") +
+  labs(y = "|resíduos|", x = "resposta ajustada (hcl)")
+ggplot(le_rls_data, aes(x = life_expectancy, y = abs(resid))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("dados originais: modelo hcl ~ le") +
+  labs(y = "|resíduos|", x = "variável explicativa (le)")
+```
+
+Para concluir se há homocedasticidade, vamos realizar o teste de Breusch-Pagan.
+
+```{r}
+# Teste de Breusch-Pagan
+bptest(le_rls, ~ life_expectancy, data = owid)
+```
+
+O valor do p-valor foi bem maior que 0.05, o que indica que não há heterocedasticidade, ou seja, aceita-se a hipótese nula de que a variância dos resíduos é constante.
+
+##### Outliers
+
+Para identificar os outliers é importante utilizar os resíduos semi-studentizados, que são os resíduos divididos pelo desvio padrão dos resíduos. Assim, vamos analisar os gráficos dos resíduos semi-studentizados.
+
++ Birth Rate
+
+```{r}
+# criar nova coluna para os residuos semi-studentizados
+br_rls_data <- br_rls_data %>%
+  mutate(resid_ss = rstandard(br_rls))
+
+# Gera gráficos dos resíduos semi-studentizados:
+ggplot(br_rls_data, aes(x = fitted, y = resid_ss)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4), 
+             linetype = "dashed", 
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("dados transformados: modelo hcl ~ br") +
+  labs(y = "resíduos padronizados", x = "resposta ajustada (hcl)")
+ggplot(br_rls_data, aes(x = birth_rate, y = resid_ss)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4), 
+             linetype = "dashed", 
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("dados transformados: modelo hcl ~ br") +
+  labs(y = "resíduos padronizados", x = "variável explicativa (br)")
+```
+
+Nota-se que temos alguns pontos com módulo do resíduo semi-studentizado próximos a 3, o que pode indicar a existência de outliers mas a evidência é fraca e não se deve realizar a exclusão de nenhum ponto por enquanto.
+
++ Deaths Air Pollution
+
+```{r}
+# criar nova coluna para os residuos semi-studentizados
+dap_rls_data <- dap_rls_data %>%
+  mutate(resid_ss = rstandard(dap_rls))
+
+# Gera gráficos dos resíduos semi-studentizados:
+ggplot(dap_rls_data, aes(x = fitted, y = resid_ss)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4), 
+             linetype = "dashed", 
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("dados transformados: modelo hcl ~ dap") +
+  labs(y = "resíduos padronizados", x = "resposta ajustada (hcl)")
+ggplot(dap_rls_data, aes(x = deaths_air_pollution, y = resid_ss)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4), 
+             linetype = "dashed", 
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("dados transformados: modelo hcl ~ dap") +
+  labs(y = "resíduos padronizados", x = "variável explicativa (dap)")
+```
+
+Nota-se em ambos os gráficos a existência de pontos de resíduos semi-studentizados maiores que 3, indicando uma forte possibilidade de outliers. Assim, é mais recomendade nesse caso excluir esses pontos.
+
++ Expected Schooling
+
+```{r}
+# criar nova coluna para os residuos semi-studentizados
+es_rls_data <- es_rls_data %>%
+  mutate(resid_ss = rstandard(es_rls))
+
+# Gera gráficos dos resíduos semi-studentizados:
+ggplot(es_rls_data, aes(x = fitted, y = resid_ss)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4), 
+             linetype = "dashed", 
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("dados transformados: modelo hcl ~ es") +
+  labs(y = "resíduos padronizados", x = "resposta ajustada (hcl)")
+ggplot(es_rls_data, aes(x = expected_schooling, y = resid_ss)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4), 
+             linetype = "dashed", 
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("dados transformados: modelo hcl ~ es") +
+  labs(y = "resíduos padronizados", x = "variável explicativa (es)")
+```
+
+Alguns pontos se aproximam de 3, mas não o suficiente para indicar a existência de outliers.
+
++ Life Expectancy
+
+```{r}
+# criar nova coluna para os residuos semi-studentizados
+le_rls_data <- le_rls_data %>%
+  mutate(resid_ss = rstandard(le_rls))
+
+# Gera gráficos dos resíduos semi-studentizados:
+ggplot(le_rls_data, aes(x = fitted, y = resid_ss)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4), 
+             linetype = "dashed", 
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("dados transformados: modelo hcl ~ le") +
+  labs(y = "resíduos padronizados", x = "resposta ajustada (hcl)")
+ggplot(le_rls_data, aes(x = life_expectancy, y = resid_ss)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4), 
+             linetype = "dashed", 
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("dados transformados: modelo hcl ~ le") +
+  labs(y = "resíduos padronizados", x = "variável explicativa (le)")
+```
+
+Temos novamente alguns pontos com módulo do resíduo semi-studentizado próximos a 3, o que pode indicar a existência de outliers mas a evidência é fraca e não se deve realizar a exclusão de nenhum ponto por enquanto.
+
+##### Independência
+
+Para a independência iremos utilizar o teste de Durbin-Watson.
+
++ Birth Rate
+
+```{r}
+# Teste de Durbin-Watson
+dwtest(br_rls, ~ birth_rate, data = owid)
+```
+
+O p-valor é bem menor que 0.05, o que indica que há autocorrelação positiva, ou seja, a hipótse nula de que não há autocorrelação positiva é rejeitada.
+
++ Deaths Air Pollution
+
+```{r}
+# Teste de Durbin-Watson
+dwtest(dap_rls, ~ deaths_air_pollution, data = owid)
+```
+
+O p-valor é bem menor que 0.05, o que indica que há autocorrelação positiva, ou seja, a hipótse nula de que não há autocorrelação positiva é rejeitada.
+
++ Expected Schooling
+
+```{r}
+# Teste de Durbin-Watson
+dwtest(es_rls, ~ expected_schooling, data = owid)
+```
+
+O p-valor é bem menor que 0.05, o que indica que há autocorrelação positiva, ou seja, a hipótse nula de que não há autocorrelação positiva é rejeitada.
+
++ Life Expectancy
+
+```{r}
+# Teste de Durbin-Watson
+dwtest(le_rls, ~ life_expectancy, data = owid)
+```
+
+O p-valor é bem menor que 0.05, o que indica que há autocorrelação positiva, ou seja, a hipótse nula de que não há autocorrelação positiva é rejeitada.
+
+##### Normalidade
+
+Para a normalidade iremos utilizar o teste de Shapiro-Wilk.
+
++ Birth Rate
+
+```{r}
+# Teste de Shapiro-Wilk
+shapiro.test(br_rls$res)
+```
+
+O p-valor é bem menor que 0.05, o que indica que não há normalidade, ou seja, a hipótse nula de que há normalidade é rejeitada. Assim, concluimos que os erros não são normalmente distribuídos.
+
++ Deaths Air Pollution
+
+```{r}
+# Teste de Shapiro-Wilk
+shapiro.test(dap_rls$res)
+```
+
+O p-valor é menor que 0.05, o que indica que não há normalidade, ou seja, a hipótse nula de que há normalidade é rejeitada. Assim, concluimos que os erros não são normalmente distribuídos.
+
++ Expected Schooling
+
+```{r}
+# Teste de Shapiro-Wilk
+shapiro.test(es_rls$res)
+```
+
+O p-valor é menor que 0.05, o que indica que não há normalidade, ou seja, a hipótse nula de que há normalidade é rejeitada. Assim, concluimos que os erros não são normalmente distribuídos.
+
++ Life Expectancy
+
+```{r}
+# Teste de Shapiro-Wilk
+shapiro.test(le_rls$res)
+```
+
+O p-valor é bem menor que 0.05, o que indica que não há normalidade, ou seja, a hipótse nula de que há normalidade é rejeitada. Assim, concluimos que os erros não são normalmente distribuídos.
 
 2. Ajuste um modelo de regressão linear simples para a variável `happiness_cantril_ladder` como função de `deaths_air_pollution` após excluir as observações 973 (X = 237 e Y = 6.00), 974 (X = 234 e Y = 5.99) e 975 (X = 225 e Y = 5.97). Obtenha intervalos de previsão de 95% de confiança para novas observações que apresentam valores da variável explicativa iguais a 237, 234 e 225. As observações eliminadas encontram-se nos limites dos intervalos de previsão obtidos? Discuta o significado dos resultados obtidos.
 
