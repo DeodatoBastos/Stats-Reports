@@ -324,7 +324,6 @@ ggplot(owid, aes(x = log10(gdp_pc) , y = happiness_cantril_ladder)) +
   labs(x = "log(gdp_pc)", y = "Happiness Cantril Ladder")
 
 ```
-----
 Podemos observar que o modelo logaritmo parece ser uma relação mais adequada para modelar essas relações. Para mostrar isso vamos comprar o MSE e o R2 para cada uma das transformações.
 
 ```{r}
@@ -731,6 +730,19 @@ shapiro.test(le_rls$res)
 O p-valor é bem menor que 0.05, o que indica que não há normalidade, ou seja, a hipótse nula de que há normalidade é rejeitada. Assim, concluimos que os erros não são normalmente distribuídos.
 
 2. Ajuste um modelo de regressão linear simples para a variável `happiness_cantril_ladder` como função de `deaths_air_pollution` após excluir as observações 973 (X = 237 e Y = 6.00), 974 (X = 234 e Y = 5.99) e 975 (X = 225 e Y = 5.97). Obtenha intervalos de previsão de 95% de confiança para novas observações que apresentam valores da variável explicativa iguais a 237, 234 e 225. As observações eliminadas encontram-se nos limites dos intervalos de previsão obtidos? Discuta o significado dos resultados obtidos.
+
+inicialmente precisamos excluir as observações 973, 974 e 975.
+
+```{r}
+# Excluindo as observações
+hcl_dap <- lm(happiness_cantril_ladder ~ deaths_air_pollution, data = slice(owid,-c(973, 974, 975)))
+
+# Intervalos de previsão
+predict(hcl_dap, newdata = data.frame(deaths_air_pollution = c(237, 234, 225)), interval = "prediction", level = 0.95)
+
+```	
+
+Podemos perceber que em um intervalo de confiança de 95% as observações as observações 973, 974 e 975 não estão nos limites dos intervalos de previsão. O que é um indício de que essas observações são outliers.
 
 3. Para os modelos considerando cada nível da variável `continent` no item (2) da seção anterior, realize o diagnóstico através da análise dos resíduos. Todos aparentam ter mesma variância dos erros? É necessário realizar alguma transformação de variáveis? Tente solucionar os possíveis problemas encontrados com o modelo. Que conclusões é possível obter a partir da análise?
 
