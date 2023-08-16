@@ -691,7 +691,7 @@ O p-valor é bem menor que 0.05, o que indica que há autocorrelação positiva,
 
 ##### Normalidade
 
-Para a normalidade iremos utilizar o teste de Shapiro-Wilk.
+Para a normalidade iremos utilizar o teste de Shapiro-Wilk. E gráficamente iremos utilizar o gráfico de probabilidade normal.
 
 + Birth Rate
 
@@ -702,6 +702,24 @@ shapiro.test(br_rls$res)
 
 O p-valor é bem menor que 0.05, o que indica que não há normalidade, ou seja, a hipótse nula de que há normalidade é rejeitada. Assim, concluimos que os erros não são normalmente distribuídos.
 
+Para complementar, analisaremo o gráfico de probabilidade normal.
+
+```{r}
+# Gráfico de probabilidade normal
+qqnorm(br_rls$res)
+qqline(br_rls$res)
+```
+
+E também o histograma dos resíduos.
+
+```{r}
+# Histograma dos resíduos
+ggplot(br_rls_data, aes(x = resid)) +
+  geom_histogram(bins = 20) +
+  ggtitle("dados originais: modelo hcl ~ br") +
+  labs(y = "frequência", x = "resíduos")
+```
+
 + Deaths Air Pollution
 
 ```{r}
@@ -710,6 +728,24 @@ shapiro.test(dap_rls$res)
 ```
 
 O p-valor é menor que 0.05, o que indica que não há normalidade, ou seja, a hipótse nula de que há normalidade é rejeitada. Assim, concluimos que os erros não são normalmente distribuídos.
+
+Para complementar, analisaremo o gráfico de probabilidade normal.
+
+```{r}
+# Gráfico de probabilidade normal
+qqnorm(dap_rls$res)
+qqline(dap_rls$res)
+```
+
+E também o histograma dos resíduos.
+
+```{r}
+# Histograma dos resíduos
+ggplot(dap_rls_data, aes(x = resid)) +
+  geom_histogram(bins = 20) +
+  ggtitle("dados originais: modelo hcl ~ dap") +
+  labs(y = "frequência", x = "resíduos")
+```
 
 + Expected Schooling
 
@@ -720,6 +756,24 @@ shapiro.test(es_rls$res)
 
 O p-valor é menor que 0.05, o que indica que não há normalidade, ou seja, a hipótse nula de que há normalidade é rejeitada. Assim, concluimos que os erros não são normalmente distribuídos.
 
+Para complementar, analisaremo o gráfico de probabilidade normal.
+
+```{r}
+# Gráfico de probabilidade normal
+qqnorm(es_rls$res)
+qqline(es_rls$res)
+```
+
+E também o histograma dos resíduos.
+
+```{r}
+# Histograma dos resíduos
+ggplot(es_rls_data, aes(x = resid)) +
+  geom_histogram(bins = 20) +
+  ggtitle("dados originais: modelo hcl ~ es") +
+  labs(y = "frequência", x = "resíduos")
+```
+
 + Life Expectancy
 
 ```{r}
@@ -728,6 +782,24 @@ shapiro.test(le_rls$res)
 ```
 
 O p-valor é bem menor que 0.05, o que indica que não há normalidade, ou seja, a hipótse nula de que há normalidade é rejeitada. Assim, concluimos que os erros não são normalmente distribuídos.
+
+Para complementar, analisaremo o gráfico de probabilidade normal.
+
+```{r}
+# Gráfico de probabilidade normal
+qqnorm(le_rls$res)
+qqline(le_rls$res)
+```
+
+E também o histograma dos resíduos.
+
+```{r}
+# Histograma dos resíduos
+ggplot(le_rls_data, aes(x = resid)) +
+  geom_histogram(bins = 20) +
+  ggtitle("dados originais: modelo hcl ~ le") +
+  labs(y = "frequência", x = "resíduos")
+```
 
 2. Ajuste um modelo de regressão linear simples para a variável `happiness_cantril_ladder` como função de `deaths_air_pollution` após excluir as observações 973 (X = 237 e Y = 6.00), 974 (X = 234 e Y = 5.99) e 975 (X = 225 e Y = 5.97). Obtenha intervalos de previsão de 95% de confiança para novas observações que apresentam valores da variável explicativa iguais a 237, 234 e 225. As observações eliminadas encontram-se nos limites dos intervalos de previsão obtidos? Discuta o significado dos resultados obtidos.
 
