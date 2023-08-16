@@ -294,7 +294,45 @@ Para uma nova observação de cada continente (`North America` e `South America`
 
 3. Construa um modelo de regressão para a variável de resposta `happiness_cantril_ladder` em função de `gdp_pc`. Assuma que o modelo de 1a. ordem é adequado para modelar essas relações. Faz sentido aplicar alguma transformação à variável explicativa? Replique os procedimentos realizados no  item (1) para um modelo considerando a variável explicativa em sua forma original ou transformada.
 
+```{r}
+# Analise de regressao para a variavel de resposta happiness_cantril_ladder em funcao de gdp_pc
+gdp_rls <- lm(happiness_cantril_ladder ~ gdp_pc, data = owid)
 
+ggplot(owid, aes(x = gdp_pc, y = happiness_cantril_ladder)) +
+  geom_point() +
+  # adiciona reta de regressão estimada
+  geom_smooth(method = lm, se = FALSE) + 
+  labs(x = "gdp_pc", y = "Happiness Cantril Ladder")
+```
 
+Com essa analise podemos perceber uma não linearidade em relação às variáveis `happiness_cantril_ladder` e `gdp_pc`, o que indica que o modelo de 1a. ordem não é adequado para modelar essas relações. Assim, faz sentido aplicar alguma transformação à variável explicativa.
 
+```{r}
+gdp_rls_inv = lm(happiness_cantril_ladder ~ 1/gdp_pc, data = owid)
+ggplot(owid, aes(x = 1/gdp_pc, y = happiness_cantril_ladder)) +
+  geom_point() +
+  # adiciona reta de regressão estimada
+  geom_smooth(method = lm, se = FALSE) + 
+  labs(x = "1/gdp_pc", y = "Happiness Cantril Ladder")
+gdp_rls_log = lm(happiness_cantril_ladder ~ log10(gdp_pc), data = owid)
+ggplot(owid, aes(x = log10(gdp_pc) , y = happiness_cantril_ladder)) +
+  geom_point() +
+  # adiciona reta de regressão estimada
+  geom_smooth(method = lm, se = FALSE) + 
+  labs(x = "log(gdp_pc)", y = "Happiness Cantril Ladder")
+
+```
 ----
+Podemos observar que o modelo logaritmo parece ser uma relação mais adequada para modelar essas relações. Para mostrar isso vamos comprar o MSE e o R2 para cada uma das transformações.
+
+```{r}
+summary(gdp_rls)$sigma^2
+summary(gdp_rls_inv)$sigma^2
+summary(gdp_rls_log)$sigma^2
+
+summary(gdp_rls)$r.squared
+summary(gdp_rls_inv)$r.squared
+summary(gdp_rls_log)$r.squared
+```
+
+Com esses parametros podemos perceber que o modelo logaritmo é o que apresenta o menor MSE e o maior R2, o que indica que ele é o mais adequado para modelar essas relações.

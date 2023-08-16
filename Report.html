@@ -535,7 +535,69 @@ deaths_air_pollution -0.01477535 -0.006005369</code></pre>
 <ol start="3" type="1">
 <li>Construa um modelo de regressão para a variável de resposta <code>happiness_cantril_ladder</code> em função de <code>gdp_pc</code>. Assuma que o modelo de 1a. ordem é adequado para modelar essas relações. Faz sentido aplicar alguma transformação à variável explicativa? Replique os procedimentos realizados no item (1) para um modelo considerando a variável explicativa em sua forma original ou transformada.</li>
 </ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Analise de regressao para a variavel de resposta happiness_cantril_ladder em funcao de gdp_pc</span></span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>gdp_rls <span class="ot">&lt;-</span> <span class="fu">lm</span>(happiness_cantril_ladder <span class="sc">~</span> gdp_pc, <span class="at">data =</span> owid)</span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">x =</span> gdp_pc, <span class="at">y =</span> happiness_cantril_ladder)) <span class="sc">+</span></span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># adiciona reta de regressão estimada</span></span>
+<span id="cb69-7"><a href="#cb69-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> </span>
+<span id="cb69-8"><a href="#cb69-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"gdp_pc"</span>, <span class="at">y =</span> <span class="st">"Happiness Cantril Ladder"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Com essa analise podemos perceber uma não linearidade em relação às variáveis <code>happiness_cantril_ladder</code> e <code>gdp_pc</code>, o que indica que o modelo de 1a. ordem não é adequado para modelar essas relações. Assim, faz sentido aplicar alguma transformação à variável explicativa.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>gdp_rls_inv <span class="ot">=</span> <span class="fu">lm</span>(happiness_cantril_ladder <span class="sc">~</span> <span class="dv">1</span><span class="sc">/</span>gdp_pc, <span class="at">data =</span> owid)</span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">/</span>gdp_pc, <span class="at">y =</span> happiness_cantril_ladder)) <span class="sc">+</span></span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># adiciona reta de regressão estimada</span></span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> </span>
+<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"1/gdp_pc"</span>, <span class="at">y =</span> <span class="st">"Happiness Cantril Ladder"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>gdp_rls_log <span class="ot">=</span> <span class="fu">lm</span>(happiness_cantril_ladder <span class="sc">~</span> <span class="fu">log10</span>(gdp_pc), <span class="at">data =</span> owid)</span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(owid, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">log10</span>(gdp_pc) , <span class="at">y =</span> happiness_cantril_ladder)) <span class="sc">+</span></span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># adiciona reta de regressão estimada</span></span>
+<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> </span>
+<span id="cb71-6"><a href="#cb71-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"log(gdp_pc)"</span>, <span class="at">y =</span> <span class="st">"Happiness Cantril Ladder"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-25-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
 <hr>
+<p>Podemos observar que o modelo logaritmo parece ser uma relação mais adequada para modelar essas relações. Para mostrar isso vamos comprar o MSE e o R2 para cada uma das transformações.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(gdp_rls)<span class="sc">$</span>sigma<span class="sc">^</span><span class="dv">2</span></span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.502539</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(gdp_rls_inv)<span class="sc">$</span>sigma<span class="sc">^</span><span class="dv">2</span></span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.274174</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(gdp_rls_log)<span class="sc">$</span>sigma<span class="sc">^</span><span class="dv">2</span></span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.4146307</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(gdp_rls)<span class="sc">$</span>r.squared</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.6059971</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(gdp_rls_inv)<span class="sc">$</span>r.squared</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(gdp_rls_log)<span class="sc">$</span>r.squared</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.6749194</code></pre>
+</div>
+</div>
+<p>Com esses parametros podemos perceber que o modelo logaritmo é o que apresenta o menor MSE e o maior R2, o que indica que ele é o mais adequado para modelar essas relações.</p>
 </section>
 
 </main>
