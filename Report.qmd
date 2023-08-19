@@ -17,6 +17,7 @@ execute:
 library(tidyverse)
 library(gridExtra)
 library(lmtest)
+library(MASS)
 ```
 
 ------------------------------------------------------------------------
@@ -818,5 +819,671 @@ Podemos perceber que em um intervalo de confiança de 95% as observações as ob
 
 3. Para os modelos considerando cada nível da variável `continent` no item (2) da seção anterior, realize o diagnóstico através da análise dos resíduos. Todos aparentam ter mesma variância dos erros? É necessário realizar alguma transformação de variáveis? Tente solucionar os possíveis problemas encontrados com o modelo. Que conclusões é possível obter a partir da análise?
 
++ África
+
+##### Linearidade
+
+```{r}
+africa_rls_data <- africa %>%
+  mutate(fitted = africa_rls$fit) %>%
+  mutate(resid = africa_rls$res)
+
+# Gráficos dos resíduos: 
+ggplot(africa_rls_data, aes(x = fitted, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "resíduos", x = "resposta ajustada (Happiness Cantril Ladder)") 
+ggplot(africa_rls_data, aes(x = deaths_air_pollution, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "resíduos", x = "variável explicativa (Deaths Air Pollution)") 
+```
+
+Não há nenhuma tendência não-linear nítida para ambos os gráficos, dessa forma, com as informações disponíveis, não há violação da hipótese de lineariedade.
+
+##### Homoscedasticidade
+```{r}
+ggplot(africa_rls_data, aes(x = fitted, y = abs(resid))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "|resíduos|", x = "resposta ajustada (Happiness Cantril Ladder)") 
+ggplot(africa_rls_data, aes(x = deaths_air_pollution, y = abs(resid))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "|resíduos|", x = "variável explicativa (Deaths Air Pollution)") 
+```
+
+```{r}
+bptest(africa_rls, ~ deaths_air_pollution, data = africa)
+```
+
+Não parece haver mudança da variância com os valores da resposta ajustada e variável explicativa.
+Há mais pontos para os valores centrais de ambas as variáveis, mas desconsiderando esse volume adicional há nenhuma mudança com mudança.
+Por fim, o teste de Breusch-Pagan retornou um valor p alto, por tanto, não é possível rejeitar a hipótese nula, ou seja, não há ocorrência dessa violação.
+
+##### Outliers
+```{r}
+africa_rls_data <- africa_rls_data %>%
+  # resíduos padronizados
+  mutate(resid_pad = rstandard(africa_rls))
+
+# Gera gráficos dos resíduos padronizados:
+ggplot(africa_rls_data, aes(x = fitted, y = resid_pad)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4), 
+             linetype = "dashed", 
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("modelo happiness ~ air pollution") +
+  labs(y = "resíduos padronizados", x = "resposta ajustada (Happiness Cantril Ladder)") 
+ggplot(africa_rls_data, aes(x = deaths_air_pollution, y = resid_pad)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4), 
+             linetype = "dashed", 
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("modelo happiness ~ air pollution") +
+  labs(y = "resíduos padronizados", x = "variável explicativa (Deaths Air Pollution)") 
+```
+
+Analisando ambos os gráficos, não há a presença de pontos extremos (acima de 3 $\sigma$).
+
+##### Independênica
+
+```{r}
+dwtest(africa_rls, ~ deaths_air_pollution, data = africa)
+```
+
+O valor p do teste de Durbin-Watson nos leva a rejeitar a hipótese nula e que há correlação não nula entre os erros.
+
+##### Normalidade
+
+```{r}
+ggplot(africa_rls_data, aes(sample = resid_pad)) +
+  stat_qq() + stat_qq_line() + 
+  labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal)") 
+
+shapiro.test(africa_rls$res)
+```
+
+Observando o gráfico de quantis normais vê-se que os dados não são exatamente normais.
+O teste de Shapiro-Wilk também nos leva a rejeitar a hipótese nula, mas o valor não é extremamente pequeno, não é uma violação tão grave da normalidade.
+
+##### Medidas Corretivas
+```{r}
+bc <- boxcox(lm(happiness_cantril_ladder ~ deaths_air_pollution, data = africa_rls_data), 
+             lambda = seq(-2, 2, by = 0.1), plotit = TRUE)
+lambda <- bc$x[which.max(bc$y)]
+```
+
+O valor de $\lambda$ que maximiza a função de verossemelhança vale `r round(lambda, digits = 2)` que está mais próximo de 1, ou seja, a transformção Box-Cox sugere manter o modelo como está.
+
++ Ásia
+
+##### Linearidade
+
+```{r}
+asia_rls_data <- asia %>%
+  mutate(fitted = asia_rls$fit) %>%
+  mutate(resid = asia_rls$res)
+
+# Gráficos dos resíduos: 
+ggplot(asia_rls_data, aes(x = fitted, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "resíduos", x = "resposta ajustada (Happiness Cantril Ladder)") 
+ggplot(asia_rls_data, aes(x = deaths_air_pollution, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "resíduos", x = "variável explicativa (Deaths Air Pollution)") 
+```
+
+Analisando ambos os gráficos também não é possível encontrar tendências de não-linearidade, os resíduos se comportam como resíduo branco.
+
+##### Homoscedasticidade
+```{r}
+ggplot(asia_rls_data, aes(x = fitted, y = abs(resid))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "|resíduos|", x = "resposta ajustada (Happiness Cantril Ladder)") 
+ggplot(asia_rls_data, aes(x = deaths_air_pollution, y = abs(resid))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "|resíduos|", x = "variável explicativa (Deaths Air Pollution)") 
+```
+
+```{r}
+bptest(asia_rls, ~ deaths_air_pollution, data = asia)
+```
+
+Há, também, uma aparenete não constancia da variabilidade, mas isso pode estar relacionado a disponibilidade dos dados, isto é, não há uma quantidade semelhante para todos os intervalos.
+
+Além disso, o valor p do teste de Breush-Pagan também nos indica para não rejeitar a hipótese nula, logo não há violação da homoscedasticidade.
+
+##### Outliers
+```{r}
+asia_rls_data <- asia_rls_data %>%
+  # resíduos padronizados
+  mutate(resid_pad = rstandard(asia_rls))
+
+# Gera gráficos dos resíduos padronizados:
+ggplot(asia_rls_data, aes(x = fitted, y = resid_pad)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4), 
+             linetype = "dashed", 
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("modelo happiness ~ air pollution") +
+  labs(y = "resíduos padronizados", x = "resposta ajustada (Happiness Cantril Ladder)") 
+ggplot(asia_rls_data, aes(x = deaths_air_pollution, y = resid_pad)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4), 
+             linetype = "dashed", 
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("modelo happiness ~ air pollution") +
+  labs(y = "resíduos padronizados", x = "variável explicativa (Deaths Air Pollution)") 
+```
+
+Ambos os gráficos, não há presença de pontos extremos (acima de 3 $\sigma$).
+
+##### Independênica
+
+```{r}
+dwtest(asia_rls, ~ deaths_air_pollution, data = asia)
+```
+
+O valor do teste de Durbin-Watson é muito pequeno, o que nos leva a rejeitar a hipótese nula, ou seja, há correção entre os erros. Possivelmente poderia acrescentar outras variáveis explicativas para solucionar esse problema, mas foge ao escopo das análises.
+
+##### Normalidade
+
+```{r}
+ggplot(asia_rls_data, aes(sample = resid_pad)) +
+  stat_qq() + stat_qq_line() + 
+  labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal)") 
+
+shapiro.test(asia_rls$res)
+```
+
+A análise do gráfico de quantis sugere que a distribuição possui uma cauda mais longa à direita.
+O valor p do teste de Shapiro-Wilk também nos leva a rejeitar a hipótese nula e considerar os dados não distribuidos normalmente.
+
+##### Medidas Corretivas
+```{r}
+bc <- boxcox(lm(happiness_cantril_ladder ~ deaths_air_pollution, data = asia_rls_data), 
+             lambda = seq(-2, 2, by = 0.1), plotit = TRUE)
+lambda <- bc$x[which.max(bc$y)]
+```
+O valor de $\lambda$ que maximiza a função de verossemelhança vale `r round(lambda, digits = 2)` que está mais próximo de 0.5, o que indica uma transformação $\sqrt{Y}$ deve ser aplicada. As verificações serão replicadas para analisar o novo modelo.
+
+```{r}
+asia_rls_bc_data <-  asia_rls_data %>%
+  mutate(happiness_bc = sqrt(happiness_cantril_ladder))
+
+asia_rls_bc <- lm(happiness_bc ~ deaths_air_pollution, data = asia_rls_bc_data)
+
+summary(asia_rls_bc)
+```
+
+###### Linearidade
+
+```{r}
+asia_rls_bc_data <- asia_rls_bc_data %>%
+  mutate(fitted = asia_rls_bc$fit) %>%
+  mutate(resid = asia_rls_bc$res)
+
+# Gráficos dos resíduos: 
+ggplot(asia_rls_bc_data, aes(x = fitted, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "resíduos", x = "resposta ajustada (sqrt(Happiness Cantril Ladder))") 
+ggplot(asia_rls_bc_data, aes(x = deaths_air_pollution, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "resíduos", x = "variável explicativa (Deaths Air Pollution)") 
+```
+
+Não parece haver sinais de não-linearidade com a transformação Box-Cox.
+
+###### Homoscedasticidade
+```{r}
+ggplot(asia_rls_bc_data, aes(x = fitted, y = abs(resid))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "|resíduos|", x = "resposta ajustada (sqrt(Happiness Cantril Ladder))") 
+ggplot(asia_rls_bc_data, aes(x = deaths_air_pollution, y = abs(resid))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "|resíduos|", x = "variável explicativa (Deaths Air Pollution)") 
+```
+
+```{r}
+bptest(asia_rls_bc, ~ deaths_air_pollution, data = asia_rls_bc_data)
+```
+
+Pelo valor p do teste de Breusch-Pagan é a possível rejeitar a hipótese nula, ou seja, há hetescedasticidade com a tranformação.
+Dessa forma, há sinais que essa transformação não seja útil.
+
+###### Outliers
+```{r}
+asia_rls_bc_data <- asia_rls_bc_data %>%
+  # resíduos padronizados
+  mutate(resid_pad = rstandard(asia_rls_bc))
+
+# Gera gráficos dos resíduos padronizados:
+ggplot(asia_rls_bc_data, aes(x = fitted, y = resid_pad)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4), 
+             linetype = "dashed", 
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("modelo happiness ~ air pollution") +
+  labs(y = "resíduos padronizados", x = "resposta ajustada (Happiness Cantril Ladder)") 
+ggplot(asia_rls_bc_data, aes(x = deaths_air_pollution, y = resid_pad)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4), 
+             linetype = "dashed", 
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("modelo happiness ~ air pollution") +
+  labs(y = "resíduos padronizados", x = "variável explicativa (Deaths Air Pollution)") 
+```
+
+Há a presenção de outliers com a tranformação, mas apenas um ponto ultrapassa os 3$\sigma$, o que não impactante para o modelo.
+
+###### Independênica
+
+```{r}
+dwtest(asia_rls_bc, ~ deaths_air_pollution, data = asia_rls_bc_data)
+```
+
+O valor p do teste de Durbin-Watson ainda é muito baixo, ou seja, ainda há correlação.
+
+###### Normalidade
+
+```{r}
+ggplot(asia_rls_bc_data, aes(sample = resid_pad)) +
+  stat_qq() + stat_qq_line() + 
+  labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal)") 
+
+shapiro.test(asia_rls_bc$res)
+```
+
+O valor p do teste de Shapiro-Wilk ainda é baixo, ou seja, a transformação não foi útil para melhorar o modelo.
+
 
 ------------------------------------------------------------------------
+
+
++ Europa
+
+##### Linearidade
+
+```{r}
+europe_rls_data <- europe %>%
+  mutate(fitted = europe_rls$fit) %>%
+  mutate(resid = europe_rls$res)
+
+# Gráficos dos resíduos: 
+ggplot(europe_rls_data, aes(x = fitted, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "resíduos", x = "resposta ajustada (Happiness Cantril Ladder)") 
+ggplot(europe_rls_data, aes(x = deaths_air_pollution, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "resíduos", x = "variável explicativa (Deaths Air Pollution)") 
+```
+
+Há muitas observações nos extremos direto da resposta ajustada e exquero da variável explicativa, isso leva a acreditar que há uma tendência não linear ou não constância da variância do erro, mas não parece ser o caso.
+
+##### Homoscedasticidade
+```{r}
+ggplot(europe_rls_data, aes(x = fitted, y = abs(resid))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "|resíduos|", x = "resposta ajustada (Happiness Cantril Ladder)") 
+ggplot(europe_rls_data, aes(x = deaths_air_pollution, y = abs(resid))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "|resíduos|", x = "variável explicativa (Deaths Air Pollution)") 
+```
+
+```{r}
+bptest(europe_rls, ~ deaths_air_pollution, data = europe)
+```
+
+O valor p do teste de Breush-Pagan nos leva a não rejetar a hipótese nula, ou seja, não há violação da homoscedasticidade
+
+##### Outliers
+```{r}
+europe_rls_data <- europe_rls_data %>%
+  # resíduos padronizados
+  mutate(resid_pad = rstandard(europe_rls))
+
+# Gera gráficos dos resíduos padronizados:
+ggplot(europe_rls_data, aes(x = fitted, y = resid_pad)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4), 
+             linetype = "dashed", 
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("modelo happiness ~ air pollution") +
+  labs(y = "resíduos padronizados", x = "resposta ajustada (Happiness Cantril Ladder)") 
+ggplot(europe_rls_data, aes(x = deaths_air_pollution, y = resid_pad)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4), 
+             linetype = "dashed", 
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("modelo happiness ~ air pollution") +
+  labs(y = "resíduos padronizados", x = "variável explicativa (Deaths Air Pollution)") 
+```
+
+Ambos os gráficos, não há presença de pontos extremos (acima de 3 $\sigma$).
+
+##### Independênica
+
+```{r}
+dwtest(europe_rls, ~ deaths_air_pollution, data = europe)
+```
+
+Assim como os demais continentes, o valor p do teste de Durbin-Watson nos leva a rejeitar a hipótese nula e acreditar que há uma violação da independência dos erros.
+
+##### Normalidade
+
+```{r}
+ggplot(europe_rls_data, aes(sample = resid_pad)) +
+  stat_qq() + stat_qq_line() + 
+  labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal)") 
+
+shapiro.test(europe_rls$res)
+```
+
+O gráfico dos quantis nos leva a acreditar numa fuga da normalidade na causa direita, a qual é mais curta do que esperado.
+O valor p do teste de Shapiro-Wilk nos leva a rejeitar a hipótese nula, ou seja, há problemas de normalidade.
+
+##### Medidas Corretivas
+```{r}
+bc <- boxcox(lm(happiness_cantril_ladder ~ deaths_air_pollution, data = europe_rls_data), 
+             lambda = seq(-2, 2, by = 0.1), plotit = TRUE)
+lambda <- bc$x[which.max(bc$y)]
+```
+O valor de $\lambda$ que maximiza a função de verossemelhança vale `r round(lambda, digits = 2)` que está no meio entre 0.5 e 1.0, por simplicidade aproximaremos para 1, mas é possível também analisar a qualidade do modelo considerando $\lambda = 0.5$.
+
++ América do Norte
+
+##### Linearidade
+
+```{r}
+north_america_rls_data <- north_america %>%
+  mutate(fitted = north_america_rls$fit) %>%
+  mutate(resid = north_america_rls$res)
+
+# Gráficos dos resíduos: 
+ggplot(north_america_rls_data, aes(x = fitted, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "resíduos", x = "resposta ajustada (Happiness Cantril Ladder)") 
+ggplot(north_america_rls_data, aes(x = deaths_air_pollution, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "resíduos", x = "variável explicativa (Deaths Air Pollution)") 
+```
+
+A pesar da falta de dados, não é possível identificar qualquer tendência nos gráficos de resíduos, logo não há violação da lineariedade analisando apenas os gráficos dos resíduos.
+
+##### Homoscedasticidade
+```{r}
+ggplot(north_america_rls_data, aes(x = fitted, y = abs(resid))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "|resíduos|", x = "resposta ajustada (Happiness Cantril Ladder)") 
+ggplot(north_america_rls_data, aes(x = deaths_air_pollution, y = abs(resid))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "|resíduos|", x = "variável explicativa (Deaths Air Pollution)") 
+```
+
+```{r}
+bptest(north_america_rls, ~ deaths_air_pollution, data = north_america)
+```
+
+O valor p do teste de Breush-Pagan nos leva a não rejetar a hipótese nula, ou seja, não há violação da homoscedasticidade
+
+##### Outliers
+```{r}
+north_america_rls_data <- north_america_rls_data %>%
+  # resíduos padronizados
+  mutate(resid_pad = rstandard(north_america_rls))
+
+# Gera gráficos dos resíduos padronizados:
+ggplot(north_america_rls_data, aes(x = fitted, y = resid_pad)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4), 
+             linetype = "dashed", 
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("modelo happiness ~ air pollution") +
+  labs(y = "resíduos padronizados", x = "resposta ajustada (Happiness Cantril Ladder)") 
+ggplot(north_america_rls_data, aes(x = deaths_air_pollution, y = resid_pad)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4), 
+             linetype = "dashed", 
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("modelo happiness ~ air pollution") +
+  labs(y = "resíduos padronizados", x = "variável explicativa (Deaths Air Pollution)") 
+```
+
+Ambos os gráficos, não há presença de pontos extremos (acima de 3 $\sigma$).
+
+##### Independênica
+
+```{r}
+dwtest(north_america_rls, ~ deaths_air_pollution, data = north_america)
+```
+
+Assim como os demais continentes, o valor p do teste de Durbin-Watson nos leva a rejeitar a hipótese nula e acreditar que há uma violação da independência dos erros.
+
+##### Normalidade
+
+```{r}
+ggplot(north_america_rls_data, aes(sample = resid_pad)) +
+  stat_qq() + stat_qq_line() + 
+  labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal)") 
+
+shapiro.test(north_america_rls$res)
+```
+
+Os pontos no gráfico dos quantis não estão perfeitamente dispostos na curva, mas com o valor p do teste de Shapiro-Wilk não é possível rejeitar a hipótese nula. Dessa forma, pode acreditar que os dados estão normalmente distribuidos.
+
+
++ América do Sul
+
+##### Linearidade
+
+```{r}
+south_america_rls_data <- south_america %>%
+  mutate(fitted = south_america_rls$fit) %>%
+  mutate(resid = south_america_rls$res)
+
+# Gráficos dos resíduos: 
+ggplot(south_america_rls_data, aes(x = fitted, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "resíduos", x = "resposta ajustada (Happiness Cantril Ladder)") 
+ggplot(south_america_rls_data, aes(x = deaths_air_pollution, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "resíduos", x = "variável explicativa (Deaths Air Pollution)") 
+```
+
+Não é possível visualizar tão bem os gráfico devido a quantidade de dados presentes, mas há uma certeza tendência parabólica para a américa do sul. Isso nos leva a acreditar que há uma violação da lineariedade.
+
+##### Homoscedasticidade
+```{r}
+ggplot(south_america_rls_data, aes(x = fitted, y = abs(resid))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "|resíduos|", x = "resposta ajustada (Happiness Cantril Ladder)") 
+ggplot(south_america_rls_data, aes(x = deaths_air_pollution, y = abs(resid))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "|resíduos|", x = "variável explicativa (Deaths Air Pollution)") 
+```
+
+```{r}
+bptest(south_america_rls, ~ deaths_air_pollution, data = south_america)
+```
+
+O valor p do teste de Breush-Pagan nos leva a não rejetar a hipótese nula, ou seja, não há violação da homoscedasticidade
+
+##### Outliers
+```{r}
+south_america_rls_data <- south_america_rls_data %>%
+  # resíduos padronizados
+  mutate(resid_pad = rstandard(south_america_rls))
+
+# Gera gráficos dos resíduos padronizados:
+ggplot(south_america_rls_data, aes(x = fitted, y = resid_pad)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4), 
+             linetype = "dashed", 
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("modelo happiness ~ air pollution") +
+  labs(y = "resíduos padronizados", x = "resposta ajustada (Happiness Cantril Ladder)") 
+ggplot(south_america_rls_data, aes(x = deaths_air_pollution, y = resid_pad)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4), 
+             linetype = "dashed", 
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("modelo happiness ~ air pollution") +
+  labs(y = "resíduos padronizados", x = "variável explicativa (Deaths Air Pollution)") 
+```
+
+Ambos os gráficos, não há presença de pontos extremos (acima de 3 $\sigma$).
+
+##### Independênica
+
+```{r}
+dwtest(south_america_rls, ~ deaths_air_pollution, data = south_america)
+```
+
+Assim como os demais continentes, o valor p do teste de Durbin-Watson nos leva a rejeitar a hipótese nula e acreditar que há uma violação da independência dos erros.
+
+##### Normalidade
+
+```{r}
+ggplot(south_america_rls_data, aes(sample = resid_pad)) +
+  stat_qq() + stat_qq_line() + 
+  labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal)") 
+
+shapiro.test(south_america_rls$res)
+```
+
+Os pontos no gráfico dos quantis não estão perfeitamente dispostos na curva, mas com o valor p do teste de Shapiro-Wilk não é possível rejeitar a hipótese nula. Dessa forma, pode acreditar que os dados estão normalmente distribuidos.
+
+##### Medidas Corretivas
+```{r}
+bc <- boxcox(lm(happiness_cantril_ladder ~ deaths_air_pollution, data = south_america_rls_data), 
+             lambda = seq(-2, 2, by = 0.1), plotit = TRUE)
+lambda <- bc$x[which.max(bc$y)]
+```
+O valor de $\lambda$ que maximiza a função de verossemelhança vale `r round(lambda, digits = 2)` que está mais perto de 0.5, assim a tranformação $\sqrt{Y}$ foi indicada pelo método Box-Cox.
+
++ Oceania
+
+##### Linearidade
+
+```{r}
+oceania_rls_data <- oceania %>%
+  mutate(fitted = oceania_rls$fit) %>%
+  mutate(resid = oceania_rls$res)
+
+# Gráficos dos resíduos: 
+ggplot(oceania_rls_data, aes(x = fitted, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "resíduos", x = "resposta ajustada (Happiness Cantril Ladder)") 
+ggplot(oceania_rls_data, aes(x = deaths_air_pollution, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "resíduos", x = "variável explicativa (Deaths Air Pollution)") 
+```
+
+Há poucos dados para a Oceania, prejudicando muito as análises dos gráficos, devido à falta de informações. Além disso, como há poucos dados o modelo está muito mais suscetível a overfitting.
+
+##### Homoscedasticidade
+```{r}
+ggplot(oceania_rls_data, aes(x = fitted, y = abs(resid))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "|resíduos|", x = "resposta ajustada (Happiness Cantril Ladder)") 
+ggplot(oceania_rls_data, aes(x = deaths_air_pollution, y = abs(resid))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(y = "|resíduos|", x = "variável explicativa (Deaths Air Pollution)") 
+```
+
+```{r}
+bptest(oceania_rls, ~ deaths_air_pollution, data = oceania)
+```
+
+O valor p do teste de Breush-Pagan nos leva a não rejetar a hipótese nula, ou seja, não há violação da homoscedasticidade
+
+##### Outliers
+```{r}
+oceania_rls_data <- oceania_rls_data %>%
+  # resíduos padronizados
+  mutate(resid_pad = rstandard(oceania_rls))
+
+# Gera gráficos dos resíduos padronizados:
+ggplot(oceania_rls_data, aes(x = fitted, y = resid_pad)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4), 
+             linetype = "dashed", 
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("modelo happiness ~ air pollution") +
+  labs(y = "resíduos padronizados", x = "resposta ajustada (Happiness Cantril Ladder)") 
+ggplot(oceania_rls_data, aes(x = deaths_air_pollution, y = resid_pad)) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4), 
+             linetype = "dashed", 
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("modelo happiness ~ air pollution") +
+  labs(y = "resíduos padronizados", x = "variável explicativa (Deaths Air Pollution)") 
+```
+
+Ambos os gráficos, não há presença de pontos extremos (acima de 3 $\sigma$).
+
+##### Independênica
+
+```{r}
+dwtest(oceania_rls, ~ deaths_air_pollution, data = oceania)
+```
+
+Assim como os demais continentes, o valor p do teste de Durbin-Watson nos leva a rejeitar a hipótese nula e acreditar que há uma violação da independência dos erros.
+
+##### Normalidade
+
+```{r}
+ggplot(oceania_rls_data, aes(sample = resid_pad)) +
+  stat_qq() + stat_qq_line() + 
+  labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal)") 
+
+shapiro.test(oceania_rls$res)
+```
+
+
+##### Medidas Corretivas
+```{r}
+bc <- boxcox(lm(happiness_cantril_ladder ~ deaths_air_pollution, data = oceania_rls_data), 
+             lambda = seq(-2, 2, by = 0.1), plotit = TRUE)
+lambda <- bc$x[which.max(bc$y)]
+```
+O valor de $\lambda$ que maximiza a função de verossemelhança vale `r round(lambda, digits = 2)` então a transformação sugerida pelo método é $Y^2$.
