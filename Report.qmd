@@ -1528,6 +1528,45 @@ Todas as variáveis explicativas possuem alta correção com a variável de resp
 
 2. Para cada modelo, ajuste um modelo de regressão de 1a. ordem com as três variáveis explicativas consideradas. Discuta os resultados obtidos.
 
+```{r}
+# Modelo I
+model1 <- lm(life_expectancy ~ birth_rate + expected_schooling + milk_consumption_pc, data = owid)
+
+summary(model1)
+```
+
+Modelo: `Yhat = 72.778 - 0.499 * birth_rate + 0.672 * expected_schooling + 0.005247 * milk_consumption_pc`
+
+R2 Multiplo: 0.8217
+
+R2 Ajustado: 0.8212
+
+Temos que o incluir as variáveis birth_rate, expected_schooling e milk_consumption_pc no modelo, reduz em cerca de 82,17% a variação total da variável resposta. O modelo ajustado possui um R2 ajustado de 82,12%, o que indica que o modelo é bom para explicar a variável resposta, além de que não há evidências de variáveis explicativas em "excesso" no modelo, pois o R2 ajustado é próximo do R2 múltiplo.
+
+F-statistic:  1507 on 3 and 981 DF,  p-value: < 2.2e-16
+
+O que indica que o modelo é bom para explicar a variável resposta, pois o p-valor é menor que 0.05. Isso indica que rejeitamos a hipótese nula de que os coeficientes são iguais a zero.
+
+```{r}
+# Modelo II
+
+model2 <- lm(life_expectancy ~ log(gdp_pc) + no_water + urban_population_percent, data = owid)
+
+summary(model2)
+```
+
+Modelo: `Yhat = 30.826 + 4.553 * log(gdp_pc) - 0.1846 * no_water + 0.00312 * urban_population_percent`
+
+R2 Multiplo: 0.8023
+
+R2 Ajustado: 0.8017
+
+Temos que: incluir as variáveis log(gdp_pc), no_water e urban_population_percent no modelo, reduz em cerca de 80,23% a variação total da variável resposta. O modelo ajustado possui um R2 ajustado de 80,17%, o que indica que o modelo é bom para explicar a variável resposta, além de que não há evidências de variáveis explicativas em "excesso" no modelo, pois o R2 ajustado é próximo do R2 múltiplo.
+
+F-statistic:  1327 on 3 and 981 DF,  p-value: < 2.2e-16
+
+O que indica que o modelo é bom para explicar a variável resposta, pois o p-valor é menor que 0.05. Isso indica que rejeitamos a hipótese nula de que os coeficientes são iguais a zero.
+
 3. Realize o diagnóstico dos modelos. É possível identificar um modelo que seja mais adequado aos dados?
 
 4. Para cada nível da variável `continent`, construa um modelo de regressão de 1a. ordem para `life_expectancy` como função das variáveis explicativas de um dos modelos acima (`birth_rate`, `expected_schooling` e `milk_consumption_pc` ou `log(gdp_pc)`, `no_water` e `urban_population_percent`).
