@@ -274,8 +274,8 @@ Voltaremos a utilizar essa massa de dados em atividades futuras.</p>
 <hr>
 </section>
 </section>
-<section id="análise-de-regressão" class="level3">
-<h3 class="anchored" data-anchor-id="análise-de-regressão">Análise de Regressão</h3>
+<section id="parte-1-regressão-linear-simples" class="level3">
+<h3 class="anchored" data-anchor-id="parte-1-regressão-linear-simples">PARTE 1: Regressão Linear Simples</h3>
 <ol type="1">
 <li>Assuma que um modelo de regressão linear simples é adequado para modelar a relação da variável de resposta <code>happiness_cantril_ladder</code> a cada uma das variáveis explicativas: <code>birth_rate</code>, <code>deaths_air_pollution</code>,<code>expected_schooling</code>, <code>life_expectancy</code>.</li>
 </ol>
@@ -2282,6 +2282,55 @@ W = 0.93799, p-value = 0.3932</code></pre>
 </div>
 <p>O valor de <span class="math inline">\(\lambda\)</span> que maximiza a função de verossemelhança vale 2 então a transformação sugerida pelo método é <span class="math inline">\(Y^2\)</span>.</p>
 </section>
+</section>
+<section id="parte-2-regressão-linear-múltipla" class="level3">
+<h3 class="anchored" data-anchor-id="parte-2-regressão-linear-múltipla">PARTE 2: Regressão Linear Múltipla</h3>
+<p>Dois modelos foram propostos para prever o a expectativa de vida de um país (<code>life_expectancy</code>):</p>
+<p><strong>Modelo I:</strong> utiliza como variáveis explicativas <code>birth_rate</code>, <code>expected_schooling</code> e <code>milk_consumption_pc</code>.</p>
+<p><strong>Modelo II:</strong> utiliza como variáveis explicativas <code>log(gdp_pc)</code>, <code>no_water</code> e <code>urban_population_percent</code>.</p>
+<ol type="1">
+<li>Construa a matriz de gráficos de dispersão, bem como a matriz de correlação para cada modelo proposto. Interprete os resultados obtidos.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb253"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb253-1"><a href="#cb253-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(life_expectancy <span class="sc">~</span> birth_rate <span class="sc">+</span> expected_schooling <span class="sc">+</span> milk_consumption_pc, <span class="at">data =</span> owid)</span>
+<span id="cb253-2"><a href="#cb253-2" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(life_expectancy <span class="sc">~</span> <span class="fu">log</span>(gdp_pc) <span class="sc">+</span> no_water <span class="sc">+</span> urban_population_percent, <span class="at">data =</span> owid)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb254"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb254-1"><a href="#cb254-1" aria-hidden="true" tabindex="-1"></a>selected_columns <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"life_expectancy"</span>, <span class="st">"birth_rate"</span>, <span class="st">"expected_schooling"</span>, <span class="st">"milk_consumption_pc"</span>)</span>
+<span id="cb254-2"><a href="#cb254-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(owid[selected_columns])</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-110-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb255"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb255-1"><a href="#cb255-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(owid[selected_columns])</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                    life_expectancy birth_rate expected_schooling
+life_expectancy           1.0000000 -0.8912013          0.8181961
+birth_rate               -0.8912013  1.0000000         -0.8134419
+expected_schooling        0.8181961 -0.8134419          1.0000000
+milk_consumption_pc       0.5984519 -0.5866678          0.6357073
+                    milk_consumption_pc
+life_expectancy               0.5984519
+birth_rate                   -0.5866678
+expected_schooling            0.6357073
+milk_consumption_pc           1.0000000</code></pre>
+</div>
+</div>
+<p>Há correlação relativamente alta entre <code>birth_rate</code> e <code>expected_schooling</code> 0.81, em módulo. Os valores de correção entre <code>birth_rate</code> e <code>milk_consumption_pc</code> não é tão alto (0.58), o mesmo vale para <code>expected_schooling</code> e <code>milk_consumption_pc</code> (0.63). Além disso, as variáveis explicativas <code>birth_rate</code> e <code>expected_schooling</code> possuem as maiores correlações com a varável de resposta <code>life_expectancy</code>, enquanto <code>milk_consumption_pc</code> não possui uma correção tão grande.</p>
+<ol start="2" type="1">
+<li><p>Para cada modelo, ajuste um modelo de regressão de 1a. ordem com as três variáveis explicativas consideradas. Discuta os resultados obtidos.</p></li>
+<li><p>Realize o diagnóstico dos modelos. É possível identificar um modelo que seja mais adequado aos dados?</p></li>
+<li><p>Para cada nível da variável <code>continent</code>, construa um modelo de regressão de 1a. ordem para <code>life_expectancy</code> como função das variáveis explicativas de um dos modelos acima (<code>birth_rate</code>, <code>expected_schooling</code> e <code>milk_consumption_pc</code> ou <code>log(gdp_pc)</code>, <code>no_water</code> e <code>urban_population_percent</code>).</p></li>
+</ol>
+<ul>
+<li>Comente sobre os resultados obtidos para os modelos ajustados.<br>
+</li>
+<li>As funções de regressão estimadas são semelhantes para os diferentes níveis da variável <code>continent</code>? Discuta.<br>
+</li>
+<li>Analise os valores de MSE e <span class="math inline">\(R^2_{aj}\)</span> para cada modelo. Essas medidas são semelhantes para os diferentes níveis de <code>continent</code>? Discuta.<br>
+</li>
+<li>Realize o diagnóstico dos modelos construídos. Interprete os gráficos e os resultados obtidos.</li>
+</ul>
+<hr>
 </section>
 
 </main>

@@ -20,6 +20,7 @@ library(lmtest)
 library(MASS)
 ```
 
+
 ------------------------------------------------------------------------
 
 ### Introdução
@@ -57,6 +58,7 @@ Os dados originais foram pré-processados no sentido de remover observações fa
 Conduza a análise exploratória da massa de dados `owid`, a fim de compreender suas características principais.\
 Voltaremos a utilizar essa massa de dados em atividades futuras.
 
+
 ```{r}
 rm(list = ls())
 owid <- read_delim("data/owid.csv", delim = ",", col_names = TRUE)
@@ -64,9 +66,11 @@ owid$continent <- as.factor(owid$continent)
 summary(owid)
 ```
 
+
 Note que para várias colunas há um intervalo muito grande entre o terceiro quartil e o valor máximo, o que pode indicar _outliers_ nos dados disponíveis. Semelhantemente para algumas colunas com `deaths_particulate_pollution`, `deaths_air_pollution` e `energy_use_pc` há um grande intervalo entre o valor mínimo e o primeiro quartil, indicando a exsitência de mais _outliers_.
 
 #### Resumos gráficos de `life_expectancy`, possível variável de respota.
+
 
 ```{r}
 ggplot(owid, aes(x = life_expectancy)) +
@@ -77,7 +81,9 @@ ggplot(owid, aes(x = life_expectancy)) +
     labs(x = "Life Expectancy (years)", y = "Density")
 ```
 
+
 O gráfico de densidade de _kernel_ ajuda a visualizar melhor os picos de espectativa de vida entre 70 e 80 anos, maior de todos e outros menores por volta dos 55, 65 e 85.
+
 
 ```{r}
 ggplot(owid, aes(x = life_expectancy, y = "")) +
@@ -87,7 +93,9 @@ ggplot(owid, aes(x = life_expectancy, y = "")) +
     labs(y = "", x = "Life Expectancy (years)")
 ```
 
+
 #### Resumos gráficos multidimensionais
+
 
 ```{r}
 ggplot(owid, aes(x = life_expectancy, y = continent)) +
@@ -120,12 +128,12 @@ geom_point() +
 labs(x = "sqrt(Eletricity Demand)", y = "Life Expectancy (years)")
 ```
 
-
 ```{r}
 ggplot(owid, aes(y = life_expectancy, x = log2(electricity_demand))) +
 geom_point() +
 labs(x = "Log2(Eletricity Demand)", y = "Life Expectancy (years)")
 ```
+
 
 ------------------------------------------------------------------------
 
@@ -136,6 +144,7 @@ labs(x = "Log2(Eletricity Demand)", y = "Life Expectancy (years)")
 
 + Construa um modelo de regressão para cada um desses pares de variáveis;
 
+
 ```{r}
 br_rls <- lm(happiness_cantril_ladder ~ birth_rate, data = owid)
 dap_rls <- lm(happiness_cantril_ladder ~ deaths_air_pollution, data = owid)
@@ -143,7 +152,9 @@ es_rls <- lm(happiness_cantril_ladder ~ expected_schooling, data = owid)
 le_rls <- lm(happiness_cantril_ladder ~ life_expectancy, data = owid)
 ```
 
+
 + Construa gráficos de dispersão (separados) com as retas de regressão ajustadas para cada caso;
+
 
 ```{r}
 ggplot(owid, aes(x = birth_rate, y = happiness_cantril_ladder)) +
@@ -177,7 +188,9 @@ ggplot(owid, aes(x = life_expectancy, y = happiness_cantril_ladder)) +
   labs(x = "Life Expectancy (years)", y = "Happiness Cantril Ladder")
 ```
 
+
 + Obtenha o MSE para cada modelo. Que variável explicativa produz menor variabilidade em torno da reta de regressão ajustada?
+
 
 ```{r}
 summary(br_rls)$sigma^2
@@ -186,9 +199,11 @@ summary(es_rls)$sigma^2
 summary(le_rls)$sigma^2
 ```
 
+
 A variável explicativa `death_air_pollution` possuiu o menor valor de MSE, ou seja, produz menor variabilidade em torno da reta de regressão ajustada.
 
 + Utilizando R2 como critério, qual das variáveis explicativas contribui para a maior redução na variabilidade da resposta `happiness_cantril_ladder`?
+
 
 ```{r}
 summary(br_rls)$r.squared
@@ -196,11 +211,13 @@ summary(dap_rls)$r.squared
 summary(es_rls)$r.squared
 summary(le_rls)$r.squared
 ```
+
 A variável `death_air_pollution` também possuiu o maior valor para a estatística R2, assim ela contruibui para a maior redução da variabilidade da resposta.
 
 2. Para cada nível da variável categórica `continent`, construa um modelo de regressão para a variável de resposta `happiness_cantril_ladder` em função da variável escolhida no último item da questão anterior.  Assuma que o modelo de 1a. ordem é adequado para modelar essas relações.
 
 + Obtenha os modelos de regressão ajustados. As funções de regressão estimadas são semelhantes para todos os níveis da variável `continent`? Discuta.
+
 
 ```{r}
 # África
@@ -239,9 +256,11 @@ oceania_rls$coefficients
 south_america_rls$coefficients
 ```
 
+
 Com isso, nota-se que as funções de regressão estimadas são semelhantes para todos os níveis da variável `continent`, exceto para o continente `Oceania`, já que o valor do coeficiente angular é negativo para os demais continentes e positivo para o continente `Oceania`. Dentre os outros continentes nota-se que eles tem um coeficiente angular muito próximo, o que indica que a função de regressão estimada é semelhante para esses níveis da variável `continent`.
 
 + Obtenha o MSE para cada nível da variável `continent` A variabilidade em torno da reta de regressão ajustada é semelhante para todos os níveis?
+
 
 ```{r}
 # África
@@ -258,9 +277,11 @@ summary(oceania_rls)$sigma^2
 summary(south_america_rls)$sigma^2
 ```
 
+
 Novamente temos uma diferença em relação ao continente `Oceania`, já que o valor do MSE é muito menor que os demais continentes. Dentre os outros continentes nota-se que eles tem um valor de MSE muito próximo, o que indica que a variabilidade em torno da reta de regressão ajustada é semelhante para esses níveis da variável `continent`, estando em uma mesma ordem de grandeza. Já o do continente `Oceania` é muito menor que os demais.
 
 + Construa intervalos de confiança 95% para o coeficiente angular da reta de regressão para os continentes `North America` e `South America`. As retas de regressão para os diferentes níveis parecem ter mesma inclinação? O que se pode concluir?
+
 
 ```{r}
 # North America
@@ -269,9 +290,11 @@ confint(north_america_rls, level = 0.95)
 confint(south_america_rls, level = 0.95)
 ```
 
+
 Com uma confiança de 95%, nota-se que os intervalos de confiança não se interceptam, o que indica que as retas de regressão para os diferentes níveis não tem a mesma inclinação.
 
 + Construa intervalos de confiança para a resposta esperada correspondendo a `deaths_air_pollution` = 50, para os continentes `North America` e `South America` O que se pode concluir?
+
 
 ```{r}
 # North America
@@ -280,9 +303,11 @@ predict(north_america_rls, newdata = data.frame(deaths_air_pollution = 50), inte
 predict(south_america_rls, newdata = data.frame(deaths_air_pollution = 50), interval = "confidence", level = 0.95)
 ```
 
+
 Com uma confiança de 95%, nota-se que os intervalos de confiança não se interceptam, o que indica que as respostas esperadas para os continentes `North America` e `South America` não são iguais. Além disso, nota-se que o intervalo de confiança de ambos é pequeno, monstrando que a resposta esperada para `deaths_air_pollution` = 50 é bem próxima do valor estimado.
 
 + Construa intervalos de previsão para uma nova observação de cada continente (`North America` e `South America`) que tenha `deaths_air_pollution` = 50. O que se pode concluir?
+
 
 ```{r}
 # Novo valor de deaths_air_pollution
@@ -293,9 +318,11 @@ predict(north_america_rls, newdata = new_x, interval = "prediction", level = 0.9
 predict(south_america_rls, newdata = new_x, interval = "prediction", level = 0.95)
 ```
 
+
 Para uma nova observação de cada continente (`North America` e `South America`) que tenha `deaths_air_pollution` = 50, nota-se que os intervalos de previsão são muito mais dispersos que o anterior, mostrando que a previsão para uma nova observação é muito mais incerta que a resposta esperada para `deaths_air_pollution` = 50.
 
 3. Construa um modelo de regressão para a variável de resposta `happiness_cantril_ladder` em função de `gdp_pc`. Assuma que o modelo de 1a. ordem é adequado para modelar essas relações. Faz sentido aplicar alguma transformação à variável explicativa? Replique os procedimentos realizados no  item (1) para um modelo considerando a variável explicativa em sua forma original ou transformada.
+
 
 ```{r}
 # Analise de regressao para a variavel de resposta happiness_cantril_ladder em funcao de gdp_pc
@@ -308,7 +335,9 @@ ggplot(owid, aes(x = gdp_pc, y = happiness_cantril_ladder)) +
   labs(x = "gdp_pc", y = "Happiness Cantril Ladder")
 ```
 
+
 Com essa analise podemos perceber uma não linearidade em relação às variáveis `happiness_cantril_ladder` e `gdp_pc`, o que indica que o modelo de 1a. ordem não é adequado para modelar essas relações. Assim, faz sentido aplicar alguma transformação à variável explicativa.
+
 
 ```{r}
 gdp_rls_inv = lm(happiness_cantril_ladder ~ 1/gdp_pc, data = owid)
@@ -325,7 +354,9 @@ ggplot(owid, aes(x = log10(gdp_pc) , y = happiness_cantril_ladder)) +
   labs(x = "log(gdp_pc)", y = "Happiness Cantril Ladder")
 
 ```
+
 Podemos observar que o modelo logaritmo parece ser uma relação mais adequada para modelar essas relações. Para mostrar isso vamos comprar o MSE e o R2 para cada uma das transformações.
+
 
 ```{r}
 summary(gdp_rls)$sigma^2
@@ -337,6 +368,7 @@ summary(gdp_rls_inv)$r.squared
 summary(gdp_rls_log)$r.squared
 ```
 
+
 Com esses parametros podemos perceber que o modelo logaritmo é o que apresenta o menor MSE e o maior R2, o que indica que ele é o mais adequado para modelar essas relações.
 
 ### Diagnóstico
@@ -345,6 +377,7 @@ Com esses parametros podemos perceber que o modelo logaritmo é o que apresenta 
 
 Inicialmente, vamos analisar o resumo do modelo de regressão ajustado
 
+
 ```{r}
 summary(br_rls)
 summary(dap_rls)
@@ -352,11 +385,13 @@ summary(es_rls)
 summary(le_rls)
 ```
 
+
 Agora vamos analisar os modelos por Linearidade, Homocedasticidade, Outliers, Independência e Normalidade.
 
 ##### Linearidade
 
 + Birth Rate
+
 
 ```{r}
 br_rls_data <- owid %>%
@@ -376,7 +411,9 @@ ggplot(br_rls_data, aes(x = birth_rate, y = resid)) +
   labs(y = "resíduos", x = "variável explicativa (br)")
 ```
 
+
 + Deaths Air Pollution
+
 
 ```{r}
 dap_rls_data <- owid %>%
@@ -396,7 +433,9 @@ ggplot(dap_rls_data, aes(x = deaths_air_pollution, y = resid)) +
   labs(y = "resíduos", x = "variável explicativa (dap)")
 ```
 
+
 + Expected Schooling
+
 
 ```{r}
 es_rls_data <- owid %>%
@@ -416,7 +455,9 @@ ggplot(es_rls_data, aes(x = expected_schooling, y = resid)) +
   labs(y = "resíduos", x = "variável explicativa (es)")
 ```
 
+
 + Life Expectancy
+
 
 ```{r}
 le_rls_data <- owid %>%
@@ -436,9 +477,11 @@ ggplot(le_rls_data, aes(x = life_expectancy, y = resid)) +
   labs(y = "resíduos", x = "variável explicativa (le)")
 ```
 
+
 ##### Homocedasticidade
 
 + Birth Rate
+
 
 ```{r}
 ggplot(br_rls_data, aes(x = fitted, y = abs(resid))) +
@@ -453,16 +496,20 @@ ggplot(br_rls_data, aes(x = birth_rate, y = abs(resid))) +
   labs(y = "|resíduos|", x = "variável explicativa (br)")
 ```
 
+
 Para concluir se há homocedasticidade, vamos realizar o teste de Breusch-Pagan.
+
 
 ```{r}
 # Teste de Breusch-Pagan
 bptest(br_rls, ~ birth_rate, data = owid)
 ```
 
+
 O valor do p-valor é menor que 0.05, o que indica que há heterocedasticidade, ou seja, a variância dos resíduos não é constante.
 
 + Deaths Air Pollution
+
 
 ```{r}
 ggplot(dap_rls_data, aes(x = fitted, y = abs(resid))) +
@@ -477,16 +524,20 @@ ggplot(dap_rls_data, aes(x = deaths_air_pollution, y = abs(resid))) +
   labs(y = "|resíduos|", x = "variável explicativa (dap)")
 ```
 
+
 Para concluir se há homocedasticidade, vamos realizar o teste de Breusch-Pagan.
+
 
 ```{r}
 # Teste de Breusch-Pagan
 bptest(dap_rls, ~ deaths_air_pollution, data = owid)
 ```
 
+
 O valor do p-valor é maior que 0.05, o que indica que não há heterocedasticidade, ou seja, aceita-se a hipótese nula de que a variância dos resíduos é constante.
 
 + Expected Schooling
+
 
 ```{r}
 ggplot(es_rls_data, aes(x = fitted, y = abs(resid))) +
@@ -501,16 +552,20 @@ ggplot(es_rls_data, aes(x = expected_schooling, y = abs(resid))) +
   labs(y = "|resíduos|", x = "variável explicativa (es)")
 ```
 
+
 Para concluir se há homocedasticidade, vamos realizar o teste de Breusch-Pagan.
+
 
 ```{r}
 # Teste de Breusch-Pagan
 bptest(es_rls, ~ expected_schooling, data = owid)
 ```
 
+
 O valor do p-valor foi bem maior que 0.05, o que indica que não há heterocedasticidade, ou seja, aceita-se a hipótese nula de que a variância dos resíduos é constante.
 
 + Life Expectancy
+
 
 ```{r}
 ggplot(le_rls_data, aes(x = fitted, y = abs(resid))) +
@@ -525,12 +580,15 @@ ggplot(le_rls_data, aes(x = life_expectancy, y = abs(resid))) +
   labs(y = "|resíduos|", x = "variável explicativa (le)")
 ```
 
+
 Para concluir se há homocedasticidade, vamos realizar o teste de Breusch-Pagan.
+
 
 ```{r}
 # Teste de Breusch-Pagan
 bptest(le_rls, ~ life_expectancy, data = owid)
 ```
+
 
 O valor do p-valor foi bem maior que 0.05, o que indica que não há heterocedasticidade, ou seja, aceita-se a hipótese nula de que a variância dos resíduos é constante.
 
@@ -539,6 +597,7 @@ O valor do p-valor foi bem maior que 0.05, o que indica que não há heterocedas
 Para identificar os outliers é importante utilizar os resíduos semi-studentizados, que são os resíduos divididos pelo desvio padrão dos resíduos. Assim, vamos analisar os gráficos dos resíduos semi-studentizados.
 
 + Birth Rate
+
 
 ```{r}
 # criar nova coluna para os residuos semi-studentizados
@@ -564,9 +623,11 @@ ggplot(br_rls_data, aes(x = birth_rate, y = resid_ss)) +
   labs(y = "resíduos padronizados", x = "variável explicativa (br)")
 ```
 
+
 Nota-se que temos alguns pontos com módulo do resíduo semi-studentizado próximos a 3, o que pode indicar a existência de outliers mas a evidência é fraca e não se deve realizar a exclusão de nenhum ponto por enquanto.
 
 + Deaths Air Pollution
+
 
 ```{r}
 # criar nova coluna para os residuos semi-studentizados
@@ -592,9 +653,11 @@ ggplot(dap_rls_data, aes(x = deaths_air_pollution, y = resid_ss)) +
   labs(y = "resíduos padronizados", x = "variável explicativa (dap)")
 ```
 
+
 Nota-se em ambos os gráficos a existência de pontos de resíduos semi-studentizados maiores que 3, indicando uma forte possibilidade de outliers. Assim, é mais recomendade nesse caso excluir esses pontos.
 
 + Expected Schooling
+
 
 ```{r}
 # criar nova coluna para os residuos semi-studentizados
@@ -620,9 +683,11 @@ ggplot(es_rls_data, aes(x = expected_schooling, y = resid_ss)) +
   labs(y = "resíduos padronizados", x = "variável explicativa (es)")
 ```
 
+
 Alguns pontos se aproximam de 3, mas não o suficiente para indicar a existência de outliers.
 
 + Life Expectancy
+
 
 ```{r}
 # criar nova coluna para os residuos semi-studentizados
@@ -648,6 +713,7 @@ ggplot(le_rls_data, aes(x = life_expectancy, y = resid_ss)) +
   labs(y = "resíduos padronizados", x = "variável explicativa (le)")
 ```
 
+
 Temos novamente alguns pontos com módulo do resíduo semi-studentizado próximos a 3, o que pode indicar a existência de outliers mas a evidência é fraca e não se deve realizar a exclusão de nenhum ponto por enquanto.
 
 ##### Independência
@@ -656,37 +722,45 @@ Para a independência iremos utilizar o teste de Durbin-Watson.
 
 + Birth Rate
 
+
 ```{r}
 # Teste de Durbin-Watson
 dwtest(br_rls, ~ birth_rate, data = owid)
 ```
 
+
 O p-valor é bem menor que 0.05, o que indica que há autocorrelação positiva, ou seja, a hipótse nula de que não há autocorrelação positiva é rejeitada.
 
 + Deaths Air Pollution
+
 
 ```{r}
 # Teste de Durbin-Watson
 dwtest(dap_rls, ~ deaths_air_pollution, data = owid)
 ```
 
+
 O p-valor é bem menor que 0.05, o que indica que há autocorrelação positiva, ou seja, a hipótse nula de que não há autocorrelação positiva é rejeitada.
 
 + Expected Schooling
+
 
 ```{r}
 # Teste de Durbin-Watson
 dwtest(es_rls, ~ expected_schooling, data = owid)
 ```
 
+
 O p-valor é bem menor que 0.05, o que indica que há autocorrelação positiva, ou seja, a hipótse nula de que não há autocorrelação positiva é rejeitada.
 
 + Life Expectancy
+
 
 ```{r}
 # Teste de Durbin-Watson
 dwtest(le_rls, ~ life_expectancy, data = owid)
 ```
+
 
 O p-valor é bem menor que 0.05, o que indica que há autocorrelação positiva, ou seja, a hipótse nula de que não há autocorrelação positiva é rejeitada.
 
@@ -696,14 +770,17 @@ Para a normalidade iremos utilizar o teste de Shapiro-Wilk. E gráficamente irem
 
 + Birth Rate
 
+
 ```{r}
 # Teste de Shapiro-Wilk
 shapiro.test(br_rls$res)
 ```
 
+
 O p-valor é bem menor que 0.05, o que indica que não há normalidade, ou seja, a hipótse nula de que há normalidade é rejeitada. Assim, concluimos que os erros não são normalmente distribuídos.
 
 Para complementar, analisaremo o gráfico de probabilidade normal.
+
 
 ```{r}
 # Gráfico de probabilidade normal
@@ -711,7 +788,9 @@ qqnorm(br_rls$res)
 qqline(br_rls$res)
 ```
 
+
 E também o histograma dos resíduos.
+
 
 ```{r}
 # Histograma dos resíduos
@@ -721,16 +800,20 @@ ggplot(br_rls_data, aes(x = resid)) +
   labs(y = "frequência", x = "resíduos")
 ```
 
+
 + Deaths Air Pollution
+
 
 ```{r}
 # Teste de Shapiro-Wilk
 shapiro.test(dap_rls$res)
 ```
 
+
 O p-valor é menor que 0.05, o que indica que não há normalidade, ou seja, a hipótse nula de que há normalidade é rejeitada. Assim, concluimos que os erros não são normalmente distribuídos.
 
 Para complementar, analisaremo o gráfico de probabilidade normal.
+
 
 ```{r}
 # Gráfico de probabilidade normal
@@ -738,7 +821,9 @@ qqnorm(dap_rls$res)
 qqline(dap_rls$res)
 ```
 
+
 E também o histograma dos resíduos.
+
 
 ```{r}
 # Histograma dos resíduos
@@ -748,16 +833,20 @@ ggplot(dap_rls_data, aes(x = resid)) +
   labs(y = "frequência", x = "resíduos")
 ```
 
+
 + Expected Schooling
+
 
 ```{r}
 # Teste de Shapiro-Wilk
 shapiro.test(es_rls$res)
 ```
 
+
 O p-valor é menor que 0.05, o que indica que não há normalidade, ou seja, a hipótse nula de que há normalidade é rejeitada. Assim, concluimos que os erros não são normalmente distribuídos.
 
 Para complementar, analisaremo o gráfico de probabilidade normal.
+
 
 ```{r}
 # Gráfico de probabilidade normal
@@ -765,7 +854,9 @@ qqnorm(es_rls$res)
 qqline(es_rls$res)
 ```
 
+
 E também o histograma dos resíduos.
+
 
 ```{r}
 # Histograma dos resíduos
@@ -775,16 +866,20 @@ ggplot(es_rls_data, aes(x = resid)) +
   labs(y = "frequência", x = "resíduos")
 ```
 
+
 + Life Expectancy
+
 
 ```{r}
 # Teste de Shapiro-Wilk
 shapiro.test(le_rls$res)
 ```
 
+
 O p-valor é bem menor que 0.05, o que indica que não há normalidade, ou seja, a hipótse nula de que há normalidade é rejeitada. Assim, concluimos que os erros não são normalmente distribuídos.
 
 Para complementar, analisaremo o gráfico de probabilidade normal.
+
 
 ```{r}
 # Gráfico de probabilidade normal
@@ -792,7 +887,9 @@ qqnorm(le_rls$res)
 qqline(le_rls$res)
 ```
 
+
 E também o histograma dos resíduos.
+
 
 ```{r}
 # Histograma dos resíduos
@@ -801,6 +898,7 @@ ggplot(le_rls_data, aes(x = resid)) +
   ggtitle("dados originais: modelo hcl ~ le") +
   labs(y = "frequência", x = "resíduos")
 ```
+
 
 ##### Conclusão
 
@@ -812,6 +910,7 @@ O modelo do `Deaths Air Pollution` é o que mais se aproxima de um modelo de reg
 
 inicialmente precisamos excluir as observações 973, 974 e 975.
 
+
 ```{r}
 # Excluindo as observações
 hcl_dap <- lm(happiness_cantril_ladder ~ deaths_air_pollution, data = slice(owid,-c(973, 974, 975)))
@@ -821,6 +920,7 @@ predict(hcl_dap, newdata = data.frame(deaths_air_pollution = c(237, 234, 225)), 
 
 ```	
 
+
 Podemos perceber que em um intervalo de confiança de 95% as observações 973, 974 e 975 não estão nos limites dos intervalos de previsão. O que é um indício de que essas observações são outliers.
 
 3. Para os modelos considerando cada nível da variável `continent` no item (2) da seção anterior, realize o diagnóstico através da análise dos resíduos. Todos aparentam ter mesma variância dos erros? É necessário realizar alguma transformação de variáveis? Tente solucionar os possíveis problemas encontrados com o modelo. Que conclusões é possível obter a partir da análise?
@@ -828,6 +928,7 @@ Podemos perceber que em um intervalo de confiança de 95% as observações 973, 
 + África
 
 ##### Linearidade
+
 
 ```{r}
 africa_rls_data <- africa %>%
@@ -845,9 +946,11 @@ ggplot(africa_rls_data, aes(x = deaths_air_pollution, y = resid)) +
   labs(y = "resíduos", x = "variável explicativa (Deaths Air Pollution)") 
 ```
 
+
 Não há nenhuma tendência não-linear nítida para ambos os gráficos, dessa forma, com as informações disponíveis, não há violação da hipótese de lineariedade.
 
 ##### Homoscedasticidade
+
 ```{r}
 ggplot(africa_rls_data, aes(x = fitted, y = abs(resid))) +
   geom_point() +
@@ -863,11 +966,13 @@ ggplot(africa_rls_data, aes(x = deaths_air_pollution, y = abs(resid))) +
 bptest(africa_rls, ~ deaths_air_pollution, data = africa)
 ```
 
+
 Não parece haver mudança da variância com os valores da resposta ajustada e variável explicativa.
 Há mais pontos para os valores centrais de ambas as variáveis, mas desconsiderando esse volume adicional há nenhuma mudança com mudança.
 Por fim, o teste de Breusch-Pagan retornou um valor p alto, por tanto, não é possível rejeitar a hipótese nula, ou seja, não há ocorrência dessa violação.
 
 ##### Outliers
+
 ```{r}
 africa_rls_data <- africa_rls_data %>%
   # resíduos padronizados
@@ -892,17 +997,21 @@ ggplot(africa_rls_data, aes(x = deaths_air_pollution, y = resid_pad)) +
   labs(y = "resíduos padronizados", x = "variável explicativa (Deaths Air Pollution)") 
 ```
 
+
 Analisando ambos os gráficos, não há a presença de pontos extremos (acima de 3 $\sigma$).
 
 ##### Independênica
+
 
 ```{r}
 dwtest(africa_rls, ~ deaths_air_pollution, data = africa)
 ```
 
+
 O valor p do teste de Durbin-Watson nos leva a rejeitar a hipótese nula e que há correlação não nula entre os erros.
 
 ##### Normalidade
+
 
 ```{r}
 ggplot(africa_rls_data, aes(sample = resid_pad)) +
@@ -912,21 +1021,25 @@ ggplot(africa_rls_data, aes(sample = resid_pad)) +
 shapiro.test(africa_rls$res)
 ```
 
+
 Observando o gráfico de quantis normais vê-se que os dados não são exatamente normais.
 O teste de Shapiro-Wilk também nos leva a rejeitar a hipótese nula, mas o valor não é extremamente pequeno, não é uma violação tão grave da normalidade.
 
 ##### Medidas Corretivas
+
 ```{r}
 bc <- boxcox(lm(happiness_cantril_ladder ~ deaths_air_pollution, data = africa_rls_data), 
              lambda = seq(-2, 2, by = 0.1), plotit = TRUE)
 lambda <- bc$x[which.max(bc$y)]
 ```
 
+
 O valor de $\lambda$ que maximiza a função de verossemelhança vale `r round(lambda, digits = 2)` que está mais próximo de 1, ou seja, a transformção Box-Cox sugere manter o modelo como está.
 
 + Ásia
 
 ##### Linearidade
+
 
 ```{r}
 asia_rls_data <- asia %>%
@@ -944,9 +1057,11 @@ ggplot(asia_rls_data, aes(x = deaths_air_pollution, y = resid)) +
   labs(y = "resíduos", x = "variável explicativa (Deaths Air Pollution)") 
 ```
 
+
 Analisando ambos os gráficos também não é possível encontrar tendências de não-linearidade, os resíduos se comportam como resíduo branco.
 
 ##### Homoscedasticidade
+
 ```{r}
 ggplot(asia_rls_data, aes(x = fitted, y = abs(resid))) +
   geom_point() +
@@ -962,11 +1077,13 @@ ggplot(asia_rls_data, aes(x = deaths_air_pollution, y = abs(resid))) +
 bptest(asia_rls, ~ deaths_air_pollution, data = asia)
 ```
 
+
 Há, também, uma aparenete não constancia da variabilidade, mas isso pode estar relacionado a disponibilidade dos dados, isto é, não há uma quantidade semelhante para todos os intervalos.
 
 Além disso, o valor p do teste de Breush-Pagan também nos indica para não rejeitar a hipótese nula, logo não há violação da homoscedasticidade.
 
 ##### Outliers
+
 ```{r}
 asia_rls_data <- asia_rls_data %>%
   # resíduos padronizados
@@ -991,17 +1108,21 @@ ggplot(asia_rls_data, aes(x = deaths_air_pollution, y = resid_pad)) +
   labs(y = "resíduos padronizados", x = "variável explicativa (Deaths Air Pollution)") 
 ```
 
+
 Ambos os gráficos, não há presença de pontos extremos (acima de 3 $\sigma$).
 
 ##### Independênica
+
 
 ```{r}
 dwtest(asia_rls, ~ deaths_air_pollution, data = asia)
 ```
 
+
 O valor do teste de Durbin-Watson é muito pequeno, o que nos leva a rejeitar a hipótese nula, ou seja, há correção entre os erros. Possivelmente poderia acrescentar outras variáveis explicativas para solucionar esse problema, mas foge ao escopo das análises.
 
 ##### Normalidade
+
 
 ```{r}
 ggplot(asia_rls_data, aes(sample = resid_pad)) +
@@ -1011,16 +1132,20 @@ ggplot(asia_rls_data, aes(sample = resid_pad)) +
 shapiro.test(asia_rls$res)
 ```
 
+
 A análise do gráfico de quantis sugere que a distribuição possui uma cauda mais longa à direita.
 O valor p do teste de Shapiro-Wilk também nos leva a rejeitar a hipótese nula e considerar os dados não distribuidos normalmente.
 
 ##### Medidas Corretivas
+
 ```{r}
 bc <- boxcox(lm(happiness_cantril_ladder ~ deaths_air_pollution, data = asia_rls_data), 
              lambda = seq(-2, 2, by = 0.1), plotit = TRUE)
 lambda <- bc$x[which.max(bc$y)]
 ```
+
 O valor de $\lambda$ que maximiza a função de verossemelhança vale `r round(lambda, digits = 2)` que está mais próximo de 0.5, o que indica uma transformação $\sqrt{Y}$ deve ser aplicada. As verificações serão replicadas para analisar o novo modelo.
+
 
 ```{r}
 asia_rls_bc_data <-  asia_rls_data %>%
@@ -1031,7 +1156,9 @@ asia_rls_bc <- lm(happiness_bc ~ deaths_air_pollution, data = asia_rls_bc_data)
 summary(asia_rls_bc)
 ```
 
+
 ###### Linearidade
+
 
 ```{r}
 asia_rls_bc_data <- asia_rls_bc_data %>%
@@ -1049,9 +1176,11 @@ ggplot(asia_rls_bc_data, aes(x = deaths_air_pollution, y = resid)) +
   labs(y = "resíduos", x = "variável explicativa (Deaths Air Pollution)") 
 ```
 
+
 Não parece haver sinais de não-linearidade com a transformação Box-Cox.
 
 ###### Homoscedasticidade
+
 ```{r}
 ggplot(asia_rls_bc_data, aes(x = fitted, y = abs(resid))) +
   geom_point() +
@@ -1067,10 +1196,12 @@ ggplot(asia_rls_bc_data, aes(x = deaths_air_pollution, y = abs(resid))) +
 bptest(asia_rls_bc, ~ deaths_air_pollution, data = asia_rls_bc_data)
 ```
 
+
 Pelo valor p do teste de Breusch-Pagan é a possível rejeitar a hipótese nula, ou seja, há hetescedasticidade com a tranformação.
 Dessa forma, há sinais que essa transformação não seja útil.
 
 ###### Outliers
+
 ```{r}
 asia_rls_bc_data <- asia_rls_bc_data %>%
   # resíduos padronizados
@@ -1095,17 +1226,21 @@ ggplot(asia_rls_bc_data, aes(x = deaths_air_pollution, y = resid_pad)) +
   labs(y = "resíduos padronizados", x = "variável explicativa (Deaths Air Pollution)") 
 ```
 
+
 Há a presenção de outliers com a tranformação, mas apenas um ponto ultrapassa os 3$\sigma$, o que não impactante para o modelo.
 
 ###### Independênica
+
 
 ```{r}
 dwtest(asia_rls_bc, ~ deaths_air_pollution, data = asia_rls_bc_data)
 ```
 
+
 O valor p do teste de Durbin-Watson ainda é muito baixo, ou seja, ainda há correlação.
 
 ###### Normalidade
+
 
 ```{r}
 ggplot(asia_rls_bc_data, aes(sample = resid_pad)) +
@@ -1114,6 +1249,7 @@ ggplot(asia_rls_bc_data, aes(sample = resid_pad)) +
 
 shapiro.test(asia_rls_bc$res)
 ```
+
 
 O valor p do teste de Shapiro-Wilk ainda é baixo, ou seja, a transformação não foi útil para melhorar o modelo.
 
@@ -1124,6 +1260,7 @@ O valor p do teste de Shapiro-Wilk ainda é baixo, ou seja, a transformação n�
 + Europa
 
 ##### Linearidade
+
 
 ```{r}
 europe_rls_data <- europe %>%
@@ -1141,9 +1278,11 @@ ggplot(europe_rls_data, aes(x = deaths_air_pollution, y = resid)) +
   labs(y = "resíduos", x = "variável explicativa (Deaths Air Pollution)") 
 ```
 
+
 Há muitas observações nos extremos direto da resposta ajustada e exquero da variável explicativa, isso leva a acreditar que há uma tendência não linear ou não constância da variância do erro, mas não parece ser o caso.
 
 ##### Homoscedasticidade
+
 ```{r}
 ggplot(europe_rls_data, aes(x = fitted, y = abs(resid))) +
   geom_point() +
@@ -1159,9 +1298,11 @@ ggplot(europe_rls_data, aes(x = deaths_air_pollution, y = abs(resid))) +
 bptest(europe_rls, ~ deaths_air_pollution, data = europe)
 ```
 
+
 O valor p do teste de Breush-Pagan nos leva a não rejetar a hipótese nula, ou seja, não há violação da homoscedasticidade
 
 ##### Outliers
+
 ```{r}
 europe_rls_data <- europe_rls_data %>%
   # resíduos padronizados
@@ -1186,17 +1327,21 @@ ggplot(europe_rls_data, aes(x = deaths_air_pollution, y = resid_pad)) +
   labs(y = "resíduos padronizados", x = "variável explicativa (Deaths Air Pollution)") 
 ```
 
+
 Ambos os gráficos, não há presença de pontos extremos (acima de 3 $\sigma$).
 
 ##### Independênica
+
 
 ```{r}
 dwtest(europe_rls, ~ deaths_air_pollution, data = europe)
 ```
 
+
 Assim como os demais continentes, o valor p do teste de Durbin-Watson nos leva a rejeitar a hipótese nula e acreditar que há uma violação da independência dos erros.
 
 ##### Normalidade
+
 
 ```{r}
 ggplot(europe_rls_data, aes(sample = resid_pad)) +
@@ -1206,20 +1351,24 @@ ggplot(europe_rls_data, aes(sample = resid_pad)) +
 shapiro.test(europe_rls$res)
 ```
 
+
 O gráfico dos quantis nos leva a acreditar numa fuga da normalidade na causa direita, a qual é mais curta do que esperado.
 O valor p do teste de Shapiro-Wilk nos leva a rejeitar a hipótese nula, ou seja, há problemas de normalidade.
 
 ##### Medidas Corretivas
+
 ```{r}
 bc <- boxcox(lm(happiness_cantril_ladder ~ deaths_air_pollution, data = europe_rls_data), 
              lambda = seq(-2, 2, by = 0.1), plotit = TRUE)
 lambda <- bc$x[which.max(bc$y)]
 ```
+
 O valor de $\lambda$ que maximiza a função de verossemelhança vale `r round(lambda, digits = 2)` que está no meio entre 0.5 e 1.0, por simplicidade aproximaremos para 1, mas é possível também analisar a qualidade do modelo considerando $\lambda = 0.5$.
 
 + América do Norte
 
 ##### Linearidade
+
 
 ```{r}
 north_america_rls_data <- north_america %>%
@@ -1237,9 +1386,11 @@ ggplot(north_america_rls_data, aes(x = deaths_air_pollution, y = resid)) +
   labs(y = "resíduos", x = "variável explicativa (Deaths Air Pollution)") 
 ```
 
+
 A pesar da falta de dados, não é possível identificar qualquer tendência nos gráficos de resíduos, logo não há violação da lineariedade analisando apenas os gráficos dos resíduos.
 
 ##### Homoscedasticidade
+
 ```{r}
 ggplot(north_america_rls_data, aes(x = fitted, y = abs(resid))) +
   geom_point() +
@@ -1255,9 +1406,11 @@ ggplot(north_america_rls_data, aes(x = deaths_air_pollution, y = abs(resid))) +
 bptest(north_america_rls, ~ deaths_air_pollution, data = north_america)
 ```
 
+
 O valor p do teste de Breush-Pagan nos leva a não rejetar a hipótese nula, ou seja, não há violação da homoscedasticidade
 
 ##### Outliers
+
 ```{r}
 north_america_rls_data <- north_america_rls_data %>%
   # resíduos padronizados
@@ -1282,17 +1435,21 @@ ggplot(north_america_rls_data, aes(x = deaths_air_pollution, y = resid_pad)) +
   labs(y = "resíduos padronizados", x = "variável explicativa (Deaths Air Pollution)") 
 ```
 
+
 Ambos os gráficos, não há presença de pontos extremos (acima de 3 $\sigma$).
 
 ##### Independênica
+
 
 ```{r}
 dwtest(north_america_rls, ~ deaths_air_pollution, data = north_america)
 ```
 
+
 Assim como os demais continentes, o valor p do teste de Durbin-Watson nos leva a rejeitar a hipótese nula e acreditar que há uma violação da independência dos erros.
 
 ##### Normalidade
+
 
 ```{r}
 ggplot(north_america_rls_data, aes(sample = resid_pad)) +
@@ -1302,12 +1459,14 @@ ggplot(north_america_rls_data, aes(sample = resid_pad)) +
 shapiro.test(north_america_rls$res)
 ```
 
+
 Os pontos no gráfico dos quantis não estão perfeitamente dispostos na curva, mas com o valor p do teste de Shapiro-Wilk não é possível rejeitar a hipótese nula. Dessa forma, pode acreditar que os dados estão normalmente distribuidos.
 
 
 + América do Sul
 
 ##### Linearidade
+
 
 ```{r}
 south_america_rls_data <- south_america %>%
@@ -1325,9 +1484,11 @@ ggplot(south_america_rls_data, aes(x = deaths_air_pollution, y = resid)) +
   labs(y = "resíduos", x = "variável explicativa (Deaths Air Pollution)") 
 ```
 
+
 Não é possível visualizar tão bem os gráfico devido a quantidade de dados presentes, mas há uma certeza tendência parabólica para a américa do sul. Isso nos leva a acreditar que há uma violação da lineariedade.
 
 ##### Homoscedasticidade
+
 ```{r}
 ggplot(south_america_rls_data, aes(x = fitted, y = abs(resid))) +
   geom_point() +
@@ -1343,9 +1504,11 @@ ggplot(south_america_rls_data, aes(x = deaths_air_pollution, y = abs(resid))) +
 bptest(south_america_rls, ~ deaths_air_pollution, data = south_america)
 ```
 
+
 O valor p do teste de Breush-Pagan nos leva a não rejetar a hipótese nula, ou seja, não há violação da homoscedasticidade
 
 ##### Outliers
+
 ```{r}
 south_america_rls_data <- south_america_rls_data %>%
   # resíduos padronizados
@@ -1370,17 +1533,21 @@ ggplot(south_america_rls_data, aes(x = deaths_air_pollution, y = resid_pad)) +
   labs(y = "resíduos padronizados", x = "variável explicativa (Deaths Air Pollution)") 
 ```
 
+
 Ambos os gráficos, não há presença de pontos extremos (acima de 3 $\sigma$).
 
 ##### Independênica
+
 
 ```{r}
 dwtest(south_america_rls, ~ deaths_air_pollution, data = south_america)
 ```
 
+
 Assim como os demais continentes, o valor p do teste de Durbin-Watson nos leva a rejeitar a hipótese nula e acreditar que há uma violação da independência dos erros.
 
 ##### Normalidade
+
 
 ```{r}
 ggplot(south_america_rls_data, aes(sample = resid_pad)) +
@@ -1390,19 +1557,23 @@ ggplot(south_america_rls_data, aes(sample = resid_pad)) +
 shapiro.test(south_america_rls$res)
 ```
 
+
 Os pontos no gráfico dos quantis não estão perfeitamente dispostos na curva, mas com o valor p do teste de Shapiro-Wilk não é possível rejeitar a hipótese nula. Dessa forma, pode acreditar que os dados estão normalmente distribuidos.
 
 ##### Medidas Corretivas
+
 ```{r}
 bc <- boxcox(lm(happiness_cantril_ladder ~ deaths_air_pollution, data = south_america_rls_data), 
              lambda = seq(-2, 2, by = 0.1), plotit = TRUE)
 lambda <- bc$x[which.max(bc$y)]
 ```
+
 O valor de $\lambda$ que maximiza a função de verossemelhança vale `r round(lambda, digits = 2)` que está mais perto de 0.5, assim a tranformação $\sqrt{Y}$ foi indicada pelo método Box-Cox.
 
 + Oceania
 
 ##### Linearidade
+
 
 ```{r}
 oceania_rls_data <- oceania %>%
@@ -1420,9 +1591,11 @@ ggplot(oceania_rls_data, aes(x = deaths_air_pollution, y = resid)) +
   labs(y = "resíduos", x = "variável explicativa (Deaths Air Pollution)") 
 ```
 
+
 Há poucos dados para a Oceania, prejudicando muito as análises dos gráficos, devido à falta de informações. Além disso, como há poucos dados o modelo está muito mais suscetível a overfitting.
 
 ##### Homoscedasticidade
+
 ```{r}
 ggplot(oceania_rls_data, aes(x = fitted, y = abs(resid))) +
   geom_point() +
@@ -1438,9 +1611,11 @@ ggplot(oceania_rls_data, aes(x = deaths_air_pollution, y = abs(resid))) +
 bptest(oceania_rls, ~ deaths_air_pollution, data = oceania)
 ```
 
+
 O valor p do teste de Breush-Pagan nos leva a não rejetar a hipótese nula, ou seja, não há violação da homoscedasticidade
 
 ##### Outliers
+
 ```{r}
 oceania_rls_data <- oceania_rls_data %>%
   # resíduos padronizados
@@ -1465,17 +1640,21 @@ ggplot(oceania_rls_data, aes(x = deaths_air_pollution, y = resid_pad)) +
   labs(y = "resíduos padronizados", x = "variável explicativa (Deaths Air Pollution)") 
 ```
 
+
 Ambos os gráficos, não há presença de pontos extremos (acima de 3 $\sigma$).
 
 ##### Independênica
+
 
 ```{r}
 dwtest(oceania_rls, ~ deaths_air_pollution, data = oceania)
 ```
 
+
 Assim como os demais continentes, o valor p do teste de Durbin-Watson nos leva a rejeitar a hipótese nula e acreditar que há uma violação da independência dos erros.
 
 ##### Normalidade
+
 
 ```{r}
 ggplot(oceania_rls_data, aes(sample = resid_pad)) +
@@ -1486,12 +1665,15 @@ shapiro.test(oceania_rls$res)
 ```
 
 
+
 ##### Medidas Corretivas
+
 ```{r}
 bc <- boxcox(lm(happiness_cantril_ladder ~ deaths_air_pollution, data = oceania_rls_data), 
              lambda = seq(-2, 2, by = 0.1), plotit = TRUE)
 lambda <- bc$x[which.max(bc$y)]
 ```
+
 O valor de $\lambda$ que maximiza a função de verossemelhança vale `r round(lambda, digits = 2)` então a transformação sugerida pelo método é $Y^2$.
 
 ### PARTE 2: Regressão Linear Múltipla
@@ -1504,6 +1686,7 @@ Dois modelos foram propostos para prever o a expectativa de vida de um país (`l
 
 1. Construa a matriz de gráficos de dispersão, bem como a matriz de correlação para cada modelo proposto. Interprete os resultados obtidos.
 
+
 ```{r}
 m1 <- lm(life_expectancy ~ birth_rate + expected_schooling + milk_consumption_pc, data = owid)
 m2 <- lm(life_expectancy ~ log(gdp_pc) + no_water + urban_population_percent, data = owid)
@@ -1515,7 +1698,9 @@ plot(owid[selected_columns])
 cor(owid[selected_columns])
 ```
 
+
 Há correlação relativamente alta entre `birth_rate` e `expected_schooling` 0.81, em módulo. Os valores de correção entre `birth_rate` e `milk_consumption_pc` não é tão alto (0.58), o mesmo vale para `expected_schooling` e `milk_consumption_pc` (0.63). Além disso, as variáveis explicativas `birth_rate` e `expected_schooling` possuem as maiores correlações com a varável de resposta `life_expectancy`, enquanto `milk_consumption_pc` não possui uma correção tão grande. O mesmo pode ser visto graficamente como a matriz de gráficos de dispersão.
+
 
 ```{r}
 owid$log_gpd_pc <- log(owid$gdp_pc)
@@ -1523,6 +1708,7 @@ selected_columns <- c("life_expectancy", "log_gpd_pc", "no_water", "urban_popula
 plot(owid[,selected_columns])
 cor(owid[,selected_columns])
 ```
+
 
 Todas as variáveis explicativas possuem alta correção com a variável de resposta. `no_water` e `urban_population_percent` possuem alta correlação com `log_gpd_pc`, as `no_water` e `urban_population_percent` possuem correlação de (0.65) não tão alta quanto as demais, mas ainda significativo.
 
@@ -1539,3 +1725,4 @@ Todas as variáveis explicativas possuem alta correção com a variável de resp
 
 
 ----
+
