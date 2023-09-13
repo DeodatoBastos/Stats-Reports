@@ -1569,6 +1569,101 @@ O que indica que o modelo é bom para explicar a variável resposta, pois o p-va
 
 3. Realize o diagnóstico dos modelos. É possível identificar um modelo que seja mais adequado aos dados?
 
+O diagnóstico dos modelos é realizado através da análise dos resíduos:
+
+Modelo I:
+```{r}
+#| layout-ncol: 2
+
+# Constrói tabela com dados do modelo I
+m1_data <- owid %>%
+  # inclui coluna com valores ajustados
+  mutate(fitted = m1$fit) %>%
+  mutate(resid = m1$res)
+
+# Gera gráficos dos resíduos:
+# Grafico: resid x resposta ajustada (yhat)
+ggplot(m1_data, aes(x = fitted, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("Gráfico de resíduos: modelo I") +
+  labs(y = "resíduos", x = "resposta ajustada (life_expectancy)")
+
+# Grafico: |resid| x resposta ajustada (yhat)
+ggplot(m1_data, aes(x = fitted, y = abs(resid))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("Gráfico de resíduos absolutos: modelo I") +
+  labs(y = "|resíduos|", x = "resposta ajustada (life_expectancy)")
+
+```
+
+Modelo II:
+
+```{r}
+#| layout-ncol: 2
+
+# Constrói tabela com dados do modelo I
+m2_data <- owid %>%
+  # inclui coluna com valores ajustados
+  mutate(fitted = m2$fit) %>%
+  mutate(resid = m2$res)
+
+# Gera gráficos dos resíduos:
+# Grafico: resid x resposta ajustada (yhat)
+ggplot(m2_data, aes(x = fitted, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("Gráfico de resíduos: modelo II") +
+  labs(y = "resíduos", x = "resposta ajustada (life_expectancy)")
+
+# Grafico: |resid| x resposta ajustada (yhat)
+ggplot(m2_data, aes(x = fitted, y = abs(resid))) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("Gráfico de resíduos absolutos: modelo II") +
+  labs(y = "|resíduos|", x = "resposta ajustada (life_expectancy)")
+
+```
+
+Gráfico dos quartis modelo I:
+```{r}
+#| layout-ncol: 2
+#| 
+# Gráfico de quantis (para resíduos)
+ggplot(m1_data, aes(sample = resid)) +
+  stat_qq() + stat_qq_line() +
+  labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal)") +
+  ggtitle("Gráfico de quantis (resíduos)")
+
+# Gráfico de quantis (para resíduos semi-studentizados)
+ggplot(m1_data, aes(sample = resid/sd(resid))) +
+  stat_qq() + stat_qq_line() +
+  labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal)") +
+  ggtitle("Gráfico de quantis (resíduos padronizados)")
+
+```
+
+Gráfico dos quartis modelo II:
+```{r}
+#| layout-ncol: 2
+#| 
+# Gráfico de quantis (para resíduos)
+ggplot(m2_data, aes(sample = resid)) +
+  stat_qq() + stat_qq_line() +
+  labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal)") +
+  ggtitle("Gráfico de quantis (resíduos)")
+
+# Gráfico de quantis (para resíduos semi-studentizados)
+ggplot(m2_data, aes(sample = resid/sd(resid))) +
+  stat_qq() + stat_qq_line() +
+  labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal)") +
+  ggtitle("Gráfico de quantis (resíduos padronizados)")
+
+```
+
+Podemos  perceber principalmente no gráfico de quartis que o modelo II possui um maior afastamento da normalidade dos resíduos que o modelo I. Isso indica que o modelo I é mais adequado aos dados.
+
 4. Para cada nível da variável `continent`, construa um modelo de regressão de 1a. ordem para `life_expectancy` como função das variáveis explicativas de um dos modelos acima (`birth_rate`, `expected_schooling` e `milk_consumption_pc` ou `log(gdp_pc)`, `no_water` e `urban_population_percent`).
 
   + Comente sobre os resultados obtidos para os modelos ajustados.  

@@ -2315,11 +2315,220 @@ expected_schooling            0.6357073
 milk_consumption_pc           1.0000000</code></pre>
 </div>
 </div>
-<p>Há correlação relativamente alta entre <code>birth_rate</code> e <code>expected_schooling</code> 0.81, em módulo. Os valores de correção entre <code>birth_rate</code> e <code>milk_consumption_pc</code> não é tão alto (0.58), o mesmo vale para <code>expected_schooling</code> e <code>milk_consumption_pc</code> (0.63). Além disso, as variáveis explicativas <code>birth_rate</code> e <code>expected_schooling</code> possuem as maiores correlações com a varável de resposta <code>life_expectancy</code>, enquanto <code>milk_consumption_pc</code> não possui uma correção tão grande.</p>
+<p>Há correlação relativamente alta entre <code>birth_rate</code> e <code>expected_schooling</code> 0.81, em módulo. Os valores de correção entre <code>birth_rate</code> e <code>milk_consumption_pc</code> não é tão alto (0.58), o mesmo vale para <code>expected_schooling</code> e <code>milk_consumption_pc</code> (0.63). Além disso, as variáveis explicativas <code>birth_rate</code> e <code>expected_schooling</code> possuem as maiores correlações com a varável de resposta <code>life_expectancy</code>, enquanto <code>milk_consumption_pc</code> não possui uma correção tão grande. O mesmo pode ser visto graficamente como a matriz de gráficos de dispersão.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb257"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb257-1"><a href="#cb257-1" aria-hidden="true" tabindex="-1"></a>owid<span class="sc">$</span>log_gpd_pc <span class="ot">&lt;-</span> <span class="fu">log</span>(owid<span class="sc">$</span>gdp_pc)</span>
+<span id="cb257-2"><a href="#cb257-2" aria-hidden="true" tabindex="-1"></a>selected_columns <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"life_expectancy"</span>, <span class="st">"log_gpd_pc"</span>, <span class="st">"no_water"</span>, <span class="st">"urban_population_percent"</span>)</span>
+<span id="cb257-3"><a href="#cb257-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(owid[,selected_columns])</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Report_files/figure-html/unnamed-chunk-111-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb258"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb258-1"><a href="#cb258-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(owid[,selected_columns])</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                         life_expectancy log_gpd_pc   no_water
+life_expectancy                1.0000000  0.8830198 -0.8154043
+log_gpd_pc                     0.8830198  1.0000000 -0.8279557
+no_water                      -0.8154043 -0.8279557  1.0000000
+urban_population_percent       0.7072639  0.7981588 -0.6587584
+                         urban_population_percent
+life_expectancy                         0.7072639
+log_gpd_pc                              0.7981588
+no_water                               -0.6587584
+urban_population_percent                1.0000000</code></pre>
+</div>
+</div>
+<p>Todas as variáveis explicativas possuem alta correção com a variável de resposta. <code>no_water</code> e <code>urban_population_percent</code> possuem alta correlação com <code>log_gpd_pc</code>, as <code>no_water</code> e <code>urban_population_percent</code> possuem correlação de (0.65) não tão alta quanto as demais, mas ainda significativo.</p>
 <ol start="2" type="1">
-<li><p>Para cada modelo, ajuste um modelo de regressão de 1a. ordem com as três variáveis explicativas consideradas. Discuta os resultados obtidos.</p></li>
-<li><p>Realize o diagnóstico dos modelos. É possível identificar um modelo que seja mais adequado aos dados?</p></li>
-<li><p>Para cada nível da variável <code>continent</code>, construa um modelo de regressão de 1a. ordem para <code>life_expectancy</code> como função das variáveis explicativas de um dos modelos acima (<code>birth_rate</code>, <code>expected_schooling</code> e <code>milk_consumption_pc</code> ou <code>log(gdp_pc)</code>, <code>no_water</code> e <code>urban_population_percent</code>).</p></li>
+<li>Para cada modelo, ajuste um modelo de regressão de 1a. ordem com as três variáveis explicativas consideradas. Discuta os resultados obtidos.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb260"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb260-1"><a href="#cb260-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo I</span></span>
+<span id="cb260-2"><a href="#cb260-2" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(life_expectancy <span class="sc">~</span> birth_rate <span class="sc">+</span> expected_schooling <span class="sc">+</span> milk_consumption_pc, <span class="at">data =</span> owid)</span>
+<span id="cb260-3"><a href="#cb260-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb260-4"><a href="#cb260-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = life_expectancy ~ birth_rate + expected_schooling + 
+    milk_consumption_pc, data = owid)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-16.7442  -2.0804   0.2394   2.1524   9.1359 
+
+Coefficients:
+                     Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)         72.778229   1.171504  62.124  &lt; 2e-16 ***
+birth_rate          -0.499387   0.017869 -27.947  &lt; 2e-16 ***
+expected_schooling   0.672446   0.066223  10.154  &lt; 2e-16 ***
+milk_consumption_pc  0.005247   0.001690   3.105  0.00196 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 3.415 on 981 degrees of freedom
+Multiple R-squared:  0.8217,    Adjusted R-squared:  0.8212 
+F-statistic:  1507 on 3 and 981 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>Modelo: <code>Yhat = 72.778 - 0.499 * birth_rate + 0.672 * expected_schooling + 0.005247 * milk_consumption_pc</code></p>
+<p>R2 Multiplo: 0.8217</p>
+<p>R2 Ajustado: 0.8212</p>
+<p>Temos que o incluir as variáveis birth_rate, expected_schooling e milk_consumption_pc no modelo, reduz em cerca de 82,17% a variação total da variável resposta. O modelo ajustado possui um R2 ajustado de 82,12%, o que indica que o modelo é bom para explicar a variável resposta, além de que não há evidências de variáveis explicativas em “excesso” no modelo, pois o R2 ajustado é próximo do R2 múltiplo.</p>
+<p>F-statistic: 1507 on 3 and 981 DF, p-value: &lt; 2.2e-16</p>
+<p>O que indica que o modelo é bom para explicar a variável resposta, pois o p-valor é menor que 0.05. Isso indica que rejeitamos a hipótese nula de que os coeficientes são iguais a zero.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb262"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb262-1"><a href="#cb262-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Modelo II</span></span>
+<span id="cb262-2"><a href="#cb262-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb262-3"><a href="#cb262-3" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(life_expectancy <span class="sc">~</span> <span class="fu">log</span>(gdp_pc) <span class="sc">+</span> no_water <span class="sc">+</span> urban_population_percent, <span class="at">data =</span> owid)</span>
+<span id="cb262-4"><a href="#cb262-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb262-5"><a href="#cb262-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model2)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = life_expectancy ~ log(gdp_pc) + no_water + urban_population_percent, 
+    data = owid)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-14.0059  -2.0096   0.3346   2.5999   9.6551 
+
+Coefficients:
+                          Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)              30.826047   1.916118  16.088   &lt;2e-16 ***
+log(gdp_pc)               4.553524   0.219966  20.701   &lt;2e-16 ***
+no_water                 -0.184607   0.017428 -10.593   &lt;2e-16 ***
+urban_population_percent  0.003116   0.008787   0.355    0.723    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 3.595 on 981 degrees of freedom
+Multiple R-squared:  0.8023,    Adjusted R-squared:  0.8017 
+F-statistic:  1327 on 3 and 981 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>Modelo: <code>Yhat = 30.826 + 4.553 * log(gdp_pc) - 0.1846 * no_water + 0.00312 * urban_population_percent</code></p>
+<p>R2 Multiplo: 0.8023</p>
+<p>R2 Ajustado: 0.8017</p>
+<p>Temos que: incluir as variáveis log(gdp_pc), no_water e urban_population_percent no modelo, reduz em cerca de 80,23% a variação total da variável resposta. O modelo ajustado possui um R2 ajustado de 80,17%, o que indica que o modelo é bom para explicar a variável resposta, além de que não há evidências de variáveis explicativas em “excesso” no modelo, pois o R2 ajustado é próximo do R2 múltiplo.</p>
+<p>F-statistic: 1327 on 3 and 981 DF, p-value: &lt; 2.2e-16</p>
+<p>O que indica que o modelo é bom para explicar a variável resposta, pois o p-valor é menor que 0.05. Isso indica que rejeitamos a hipótese nula de que os coeficientes são iguais a zero.</p>
+<ol start="3" type="1">
+<li>Realize o diagnóstico dos modelos. É possível identificar um modelo que seja mais adequado aos dados?</li>
+</ol>
+<p>O diagnóstico dos modelos é realizado através da análise dos resíduos:</p>
+<p>Modelo I:</p>
+<div>
+<div class="sourceCode cell-code" id="cb264"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb264-1"><a href="#cb264-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Constrói tabela com dados do modelo I</span></span>
+<span id="cb264-2"><a href="#cb264-2" aria-hidden="true" tabindex="-1"></a>m1_data <span class="ot">&lt;-</span> owid <span class="sc">%&gt;%</span></span>
+<span id="cb264-3"><a href="#cb264-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># inclui coluna com valores ajustados</span></span>
+<span id="cb264-4"><a href="#cb264-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fitted =</span> m1<span class="sc">$</span>fit) <span class="sc">%&gt;%</span></span>
+<span id="cb264-5"><a href="#cb264-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">resid =</span> m1<span class="sc">$</span>res)</span>
+<span id="cb264-6"><a href="#cb264-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb264-7"><a href="#cb264-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Gera gráficos dos resíduos:</span></span>
+<span id="cb264-8"><a href="#cb264-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Grafico: resid x resposta ajustada (yhat)</span></span>
+<span id="cb264-9"><a href="#cb264-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(m1_data, <span class="fu">aes</span>(<span class="at">x =</span> fitted, <span class="at">y =</span> resid)) <span class="sc">+</span></span>
+<span id="cb264-10"><a href="#cb264-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb264-11"><a href="#cb264-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb264-12"><a href="#cb264-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Gráfico de resíduos: modelo I"</span>) <span class="sc">+</span></span>
+<span id="cb264-13"><a href="#cb264-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"resíduos"</span>, <span class="at">x =</span> <span class="st">"resposta ajustada (life_expectancy)"</span>)</span>
+<span id="cb264-14"><a href="#cb264-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Grafico: |resid| x resposta ajustada (yhat)</span></span>
+<span id="cb264-15"><a href="#cb264-15" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(m1_data, <span class="fu">aes</span>(<span class="at">x =</span> fitted, <span class="at">y =</span> <span class="fu">abs</span>(resid))) <span class="sc">+</span></span>
+<span id="cb264-16"><a href="#cb264-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb264-17"><a href="#cb264-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb264-18"><a href="#cb264-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Gráfico de resíduos absolutos: modelo I"</span>) <span class="sc">+</span></span>
+<span id="cb264-19"><a href="#cb264-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"|resíduos|"</span>, <span class="at">x =</span> <span class="st">"resposta ajustada (life_expectancy)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="Report_files/figure-html/unnamed-chunk-114-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="Report_files/figure-html/unnamed-chunk-114-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+</div>
+<p>Modelo II:</p>
+<div>
+<div class="sourceCode cell-code" id="cb265"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb265-1"><a href="#cb265-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Constrói tabela com dados do modelo I</span></span>
+<span id="cb265-2"><a href="#cb265-2" aria-hidden="true" tabindex="-1"></a>m2_data <span class="ot">&lt;-</span> owid <span class="sc">%&gt;%</span></span>
+<span id="cb265-3"><a href="#cb265-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># inclui coluna com valores ajustados</span></span>
+<span id="cb265-4"><a href="#cb265-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fitted =</span> m2<span class="sc">$</span>fit) <span class="sc">%&gt;%</span></span>
+<span id="cb265-5"><a href="#cb265-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">resid =</span> m2<span class="sc">$</span>res)</span>
+<span id="cb265-6"><a href="#cb265-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb265-7"><a href="#cb265-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Gera gráficos dos resíduos:</span></span>
+<span id="cb265-8"><a href="#cb265-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Grafico: resid x resposta ajustada (yhat)</span></span>
+<span id="cb265-9"><a href="#cb265-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(m2_data, <span class="fu">aes</span>(<span class="at">x =</span> fitted, <span class="at">y =</span> resid)) <span class="sc">+</span></span>
+<span id="cb265-10"><a href="#cb265-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb265-11"><a href="#cb265-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb265-12"><a href="#cb265-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Gráfico de resíduos: modelo II"</span>) <span class="sc">+</span></span>
+<span id="cb265-13"><a href="#cb265-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"resíduos"</span>, <span class="at">x =</span> <span class="st">"resposta ajustada (life_expectancy)"</span>)</span>
+<span id="cb265-14"><a href="#cb265-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Grafico: |resid| x resposta ajustada (yhat)</span></span>
+<span id="cb265-15"><a href="#cb265-15" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(m2_data, <span class="fu">aes</span>(<span class="at">x =</span> fitted, <span class="at">y =</span> <span class="fu">abs</span>(resid))) <span class="sc">+</span></span>
+<span id="cb265-16"><a href="#cb265-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb265-17"><a href="#cb265-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb265-18"><a href="#cb265-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Gráfico de resíduos absolutos: modelo II"</span>) <span class="sc">+</span></span>
+<span id="cb265-19"><a href="#cb265-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"|resíduos|"</span>, <span class="at">x =</span> <span class="st">"resposta ajustada (life_expectancy)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="Report_files/figure-html/unnamed-chunk-115-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="Report_files/figure-html/unnamed-chunk-115-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+</div>
+<p>Gráfico dos quartis modelo I:</p>
+<div>
+<div class="sourceCode cell-code" id="cb266"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb266-1"><a href="#cb266-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de quantis (para resíduos)</span></span>
+<span id="cb266-2"><a href="#cb266-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(m1_data, <span class="fu">aes</span>(<span class="at">sample =</span> resid)) <span class="sc">+</span></span>
+<span id="cb266-3"><a href="#cb266-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq</span>() <span class="sc">+</span> <span class="fu">stat_qq_line</span>() <span class="sc">+</span></span>
+<span id="cb266-4"><a href="#cb266-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"quantis amostrais"</span>, <span class="at">x =</span> <span class="st">"quantis teóricos (dist. normal)"</span>) <span class="sc">+</span></span>
+<span id="cb266-5"><a href="#cb266-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Gráfico de quantis (resíduos)"</span>)</span>
+<span id="cb266-6"><a href="#cb266-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de quantis (para resíduos semi-studentizados)</span></span>
+<span id="cb266-7"><a href="#cb266-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(m1_data, <span class="fu">aes</span>(<span class="at">sample =</span> resid<span class="sc">/</span><span class="fu">sd</span>(resid))) <span class="sc">+</span></span>
+<span id="cb266-8"><a href="#cb266-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq</span>() <span class="sc">+</span> <span class="fu">stat_qq_line</span>() <span class="sc">+</span></span>
+<span id="cb266-9"><a href="#cb266-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"quantis amostrais"</span>, <span class="at">x =</span> <span class="st">"quantis teóricos (dist. normal)"</span>) <span class="sc">+</span></span>
+<span id="cb266-10"><a href="#cb266-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Gráfico de quantis (resíduos padronizados)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="Report_files/figure-html/unnamed-chunk-116-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="Report_files/figure-html/unnamed-chunk-116-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+</div>
+<p>Gráfico dos quartis modelo II:</p>
+<div>
+<div class="sourceCode cell-code" id="cb267"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb267-1"><a href="#cb267-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de quantis (para resíduos)</span></span>
+<span id="cb267-2"><a href="#cb267-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(m2_data, <span class="fu">aes</span>(<span class="at">sample =</span> resid)) <span class="sc">+</span></span>
+<span id="cb267-3"><a href="#cb267-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq</span>() <span class="sc">+</span> <span class="fu">stat_qq_line</span>() <span class="sc">+</span></span>
+<span id="cb267-4"><a href="#cb267-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"quantis amostrais"</span>, <span class="at">x =</span> <span class="st">"quantis teóricos (dist. normal)"</span>) <span class="sc">+</span></span>
+<span id="cb267-5"><a href="#cb267-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Gráfico de quantis (resíduos)"</span>)</span>
+<span id="cb267-6"><a href="#cb267-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de quantis (para resíduos semi-studentizados)</span></span>
+<span id="cb267-7"><a href="#cb267-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(m2_data, <span class="fu">aes</span>(<span class="at">sample =</span> resid<span class="sc">/</span><span class="fu">sd</span>(resid))) <span class="sc">+</span></span>
+<span id="cb267-8"><a href="#cb267-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq</span>() <span class="sc">+</span> <span class="fu">stat_qq_line</span>() <span class="sc">+</span></span>
+<span id="cb267-9"><a href="#cb267-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"quantis amostrais"</span>, <span class="at">x =</span> <span class="st">"quantis teóricos (dist. normal)"</span>) <span class="sc">+</span></span>
+<span id="cb267-10"><a href="#cb267-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Gráfico de quantis (resíduos padronizados)"</span>)</span></code><button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="Report_files/figure-html/unnamed-chunk-117-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="Report_files/figure-html/unnamed-chunk-117-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+</div>
+<p>Podemos perceber principalmente no gráfico de quartis que o modelo II possui um maior afastamento da normalidade dos resíduos que o modelo I. Isso indica que o modelo I é mais adequado aos dados.</p>
+<ol start="4" type="1">
+<li>Para cada nível da variável <code>continent</code>, construa um modelo de regressão de 1a. ordem para <code>life_expectancy</code> como função das variáveis explicativas de um dos modelos acima (<code>birth_rate</code>, <code>expected_schooling</code> e <code>milk_consumption_pc</code> ou <code>log(gdp_pc)</code>, <code>no_water</code> e <code>urban_population_percent</code>).</li>
 </ol>
 <ul>
 <li>Comente sobre os resultados obtidos para os modelos ajustados.<br>
