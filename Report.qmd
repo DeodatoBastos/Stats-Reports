@@ -1941,6 +1941,93 @@ Veja que o valor-p da estatística-F é quase 1, logo não é possível rejeitar
 
 + realizar análise de resíduos (verificar validade das hipóteses)
 
+Como os termos de interação não foram adicionados, iremos analisar o modelo `m_quali`.
+
+```{r}
+# Constrói tabela com dados do modelo `m_quali`
+owid_m_quali_data <- filter_owid %>%
+  # inclui coluna com valores ajustados
+  mutate(fitted = m_quali$fit) %>%
+  mutate(resid = m_quali$res) 
+```
+
+```{r}
+# Gera gráficos dos resíduos:
+ggplot(owid_m_quali_data, aes(x = fitted, y = resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  ggtitle("gráfico de resíduos: modelo life_expectancy ~ urban_population_c + no_water_c * log_gdp_c + continent") +
+  labs(y = "resíduos", x = "resposta ajustada (life_expectancy)")
+```
+
+```{r}
+# Gráfico dos resíduos padronizados
+ggplot(owid_m_quali_data, aes(x = fitted, y = resid/sd(resid))) +
+  geom_point() +
+  geom_hline(yintercept = c(-4, -3, 0, 3, 4), 
+             linetype = "dashed", 
+             color = c("red", "orange", "black", "orange", "red") ) +
+  ylim(-6, 6) +
+  ggtitle("gráfico de resíduos padronizados: modelo life_expectancy ~ urban_population_c + no_water_c * log_gdp_c + continent") +
+  labs(y = "resíduos padronizados", x = "resposta ajustada (life_expectancy)")
+```
+
+O gráfico dos resíduos mostra uma aparente heterocedasticidade, pois há uma tendência de diminução da variância dos resíduos conforme o aumento da resposta ajustada. O gráfico dos resíduos padronizados mostra que há apenas um ponto extremo, pois está fora do intervalo $[-3, 3]$.
+
+Para constatar a heterocedasticidade, iremos realizar o teste de Breusch-Pagan.
+
+```{r}
+bptest(m_quali)
+```
+
+O Teste deu um p-valor de 0.0086, o que da evidência estatistica suficiente para rejeitar a hipótese nula de que a variância dos resíduos é constante. Dessa forma, há heterocedasticidade.
+
+Esse erro de modelo não é tão grave, pois o modelo ainda é significativo e a heterocedasticidade não é tão grande, por enquanto iremos continuar analisando o modelo.
+
+Vamos agora analisar a normalidade dos resíduos.
+
+```{r}
+# Gráfico de quantis
+ggplot(owid_m_quali_data, aes(sample = resid)) +
+  stat_qq() + stat_qq_line() +
+  ggtitle("gráfico de quantis normais") +
+  labs(y = "quantis amostrais", x = "quantis teóricos (dist. normal)") 
+```
+
+O gráfico aparenta ser de uma distribuição normal, mas há uma leve fuga nas pontas da distribuição. Vamos realizar o teste de Shapiro-Wilk.
+
+```{r}
+shapiro.test(owid_m_quali_data$resid)
+```
+
+O teste deu um p-valor de 0.83, isso indica que não há evidências estatísticas suficientes para rejeitar a hipótese nula de que os resíduos seguem uma distribuição normal.
+
+Vamos analisar agora a linearidade do modelo.
+
+Pelo gráfico de resíduos, não parece haver uma tendência não linear. Vamos realizar o teste de Ramsey RESET.
+
+```{r}
+resettest(m_quali)
+```
+
+O p-valor de 0.92 no teste de RESET sugere que não há evidências estatisticamente significativas para rejeitar a hipótese nula de que o modelo de regressão está especificado corretamente. Portanto, com base nos dados analisados, não há indícios convincentes de que haja omissão de variáveis relevantes ou problemas na forma funcional do modelo.
+
+Essa conclusão sugere que o modelo atual pode ser apropriado para explicar a relação entre as variáveis incluídas, pelo menos com relação à detecção de não linearidades ou especificações inadequadas que o teste de RESET examina.
+
+Por fim, iremos analisar a independência dos resíduos. A independência dos resíduos também pode ser entendido como um problema em que uma variável explicativa importante foi omitida do modelo, mas isso já foi analisado na análise de linearidade. Assim, para o teste de independência dos resíduos, iremos utilizar o teste de Durbin-Watson.
+
+```{r}
+dwtest(m_quali)
+```
+
+DW = 2.3472: O valor da estatística de Durbin-Watson é próximo a 2, sugerindo que não há forte evidência de autocorrelação nos resíduos.
+
+p-valor = 0.98: O p-valor é bem próximo de 1, o que sugere que não há evidências estatísticas suficientes para rejeitar a hipótese nula de que não há autocorrelação nos resíduos.
+
+Assim, concluimos que não há evidências de autocorrelação nos resíduos.
+
+Como o modelo ainda é significativo, iremos continuar a análise.
+
 **utilização do modelo**
 
 + para realizar inferências
@@ -1948,5 +2035,14 @@ Veja que o valor-p da estatística-F é quase 1, logo não é possível rejeitar
 
 Forneça interpretações e discussão para os resultados obtidos.
 
+O modelo final obtido foi o:
+
+```{r}
+summary(m_quali)
+```
+
+Formula: `life_expectancy ~ urban_population_c + no_water_c * log_gdp_c + continent`
+
+Modelo: `Yhat = 66.984 + 0.003417 * urban_population_c + ...`
 
 ----
