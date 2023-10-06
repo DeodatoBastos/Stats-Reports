@@ -3259,6 +3259,8 @@ F-statistic: 101.7 on 8 and 129 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>Formula: <code>life_expectancy ~ urban_population_c + no_water_c * log_gdp_c + continent</code></p>
 <p>Modelo: <code>Yhat = 66.984 + 0.003417 * urban_population_c + ...</code></p>
 <hr>
+<p>A partir dos coefientes gerados podemos perceber que continentes com maior população urbana possuem maior expectativa de vida, pois o coeficiente de <code>urban_population_c</code> é positivo e significativo. Além disso, o coeficiente de <code>no_water_c</code> é negativo e significativo, o que indica que quanto maior a porcentagem de pessoas sem acesso a água potável, menor a expectativa de vida. O coeficiente de <code>log_gdp_c</code> é positivo e significativo, o que indica que quanto maior o PIB per capita, maior a expectativa de vida.</p>
+<p>Isso pode ser inferido a partir do modelo final gerado para a espectativa de vida em função das variáveis explicativas. Com isso podemos inferir que a expectativa de vida é maior em países com maior população urbana, maior PIB per capita e menor porcentagem de pessoas sem acesso a água potável e com esses indicadores é possível ajudar na tomada de desição para melhorar a expectativa de vida de um país.</p>
 </section>
 
 </main>
